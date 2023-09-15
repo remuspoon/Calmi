@@ -20,19 +20,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
-
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  // const { messages } = req?.body
-  // console.log(messages)
-  try {
-    // const response = await openAi.completions.create({
-    //   model: 'gpt-3.5-turbo',
-    //   prompt: messages,
-    //   max_tokens: 5
-    // })
-
-    return NextResponse.json({ response: 'hello' })
-  } catch (error: any) {
-    res.status(500).json({ error: error.message })
-  }
-}
