@@ -14,6 +14,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  console.log(process.env.DB_HOST)
   return (
     <html lang='en'>
       <body
