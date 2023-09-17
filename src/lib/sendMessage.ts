@@ -1,4 +1,4 @@
-import { ChatCompletionMessageParam } from '@/app/chat/[chatID]/page'
+import { ChatCompletionMessageParam } from '@/app/(site)/chat/[chatID]/page'
 
 export const sendMessage = async (messages: ChatCompletionMessageParam[]) => {
   console.log(messages)
