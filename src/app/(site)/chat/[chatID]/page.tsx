@@ -92,7 +92,7 @@ function ChatPage() {
               </div>
             )
           } else {
-            console.log(msg)
+            // console.log(msg)
             return (
               <div key={index} className='chat chat-start'>
                 <div className='chat-image avatar'>

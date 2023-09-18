@@ -1,7 +1,6 @@
 import { ChatCompletionMessageParam } from '@/app/(site)/chat/[chatID]/page'
 
 export const sendMessage = async (messages: ChatCompletionMessageParam[]) => {
-  console.log(messages)
   try {
     const response = await fetch('/chat/api', {
       method: 'POST',
