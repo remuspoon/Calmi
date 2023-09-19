@@ -1,10 +1,18 @@
 import { defineField, defineType } from 'sanity'
 
+export type Sanitymeta = {
+  _createdAt: string
+  _id: string
+  _rev: string
+  _type: string
+  _updatedAt: string
+}
+
 export type Question = {
   label: string
   type: string
   question: string
-  mcqOptions?: string[]
+  options?: string[]
 }
 
 export const QuestionFields = [
@@ -50,9 +58,7 @@ export const QuestionFields = [
         name: 'option',
         title: 'Option'
       }
-    ],
-    hidden: ({ document }) =>
-      document?.type !== 'radio' && document?.type !== 'select'
+    ]
   })
 ]
 export const initialValue = {
