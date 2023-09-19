@@ -20,6 +20,10 @@ import { client } from './client'
 // }
 
 export async function getSurvey() {
-  const surveys = (await client.fetch(`*[_type == "survey"]`)) as Survey[]
+  const surveys = (await client.fetch(
+    `*[_type == "survey"]`,
+    {},
+    { next: { revalidate: 0 } }
+  )) as Survey[]
   return surveys
 }
