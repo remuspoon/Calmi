@@ -9,7 +9,7 @@ export default function Home() {
       </p>
       <Link href={'/chat/anonymous'} className='btn btn-accent mt-8'>
         {' '}
-        Start Anonymous Chat
+        Start Quick Chat
       </Link>
     </div>
   )
