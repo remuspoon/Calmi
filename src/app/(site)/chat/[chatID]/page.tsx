@@ -1,10 +1,7 @@
 import Chat from '@/components/Chat'
 import Steps from '@/components/Steps'
 import Survey from '@/components/Survey'
-import {
-  getPostChatSurvey,
-  getPreChatSurvey
-} from '@/services/sanity/lib/queries'
+import { getSurvey } from '@/services/sanity/lib/queries'
 
 async function ChatPage({
   searchParams
@@ -12,8 +9,14 @@ async function ChatPage({
   searchParams: { currentStep: number }
 }) {
   const currentStep = Number(searchParams.currentStep) || 0
-  const prechatSurvey = await getPreChatSurvey()
-  const postchatSurvey = await getPostChatSurvey()
+  const surveys = await getSurvey()
+  const prechatSurvey =
+    surveys.find((s) => s.title === 'preChatSurvey')?.questions || []
+  const postchatSurvey =
+    surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
+
+  console.log('pre', prechatSurvey)
+  console.log('post', postchatSurvey)
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
       <Steps currentStep={currentStep} />
