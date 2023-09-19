@@ -6,7 +6,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
   const chatID = useParams().chatID
   const router = useRouter()
   useEffect(() => {
-    if (chatID === 'anonymous?currentStep=0') {
+    if (chatID === 'anonymous') {
       // create anonymous chat and redirect to it
       // router.replace('/chat/123')
     }
