@@ -46,6 +46,27 @@ function Survey({ Questions }: Params) {
                 ></textarea>
               </div>
             )
+
+          case 'radio':
+            return (
+              <div className='form-control w-full max-w-xs' key={i}>
+                <label className='label' htmlFor={question.label}>
+                  <span className='label-text'>
+                    {i + 1}. {question.question}
+                  </span>
+                </label>
+                <input
+                  type='radio'
+                  name='radio-7'
+                  className='radio radio-info'
+                />
+                <input
+                  type='radio'
+                  name='radio-7'
+                  className='radio radio-info'
+                />
+              </div>
+            )
           default:
             break
         }
