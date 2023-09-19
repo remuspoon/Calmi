@@ -10,7 +10,7 @@ export type Sanitymeta = {
 
 export type Question = {
   label: string
-  type: string
+  type: 'short' | 'long' | 'radio' | 'select'
   question: string
   options?: string[]
 }
