@@ -1,15 +1,8 @@
 import { defineField, defineType } from 'sanity'
 
-export type Question = {
-  label: string
-  type: string
-  question: string
-  mcqOptions?: string[]
-}
-
 const Schema = defineType({
-  name: 'preChatSurvey',
-  title: 'Pre Chat Survey',
+  name: 'postChatSurvey',
+  title: 'Post Chat Survey',
   type: 'document',
   fields: [
     defineField({
