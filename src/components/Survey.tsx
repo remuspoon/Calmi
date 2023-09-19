@@ -7,7 +7,6 @@ type Params = {
 function Survey({ Questions }: Params) {
   return (
     <div>
-      hey boy
       {Questions.map((question, i) => (
         <p key={i}>{question.question}</p>
       ))}
