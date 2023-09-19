@@ -18,7 +18,8 @@ export default function RootLayout({
     <html lang='en'>
       <body
         className={
-          inter.className + ' flex flex-col justify-center items-center'
+          inter.className +
+          ' flex flex-col justify-center items-center min-h-screen'
         }
       >
         {children}

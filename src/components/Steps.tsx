@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Steps() {
+function Steps({ currentStep }: { currentStep: number }) {
   return (
     <ul className='steps'>
       <li className={`step ${currentStep === 0 && 'step-info'}`}>

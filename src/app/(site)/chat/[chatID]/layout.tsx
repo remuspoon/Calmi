@@ -11,5 +11,5 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
       // router.replace('/chat/123')
     }
   }, [chatID])
-  return <div>{children}</div>
+  return <div className=''>{children}</div>
 }

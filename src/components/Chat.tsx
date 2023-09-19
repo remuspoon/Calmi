@@ -65,64 +65,62 @@ function Chat() {
     setMessage('')
   }
   return (
-    <div className='flex items-center justify-center basis-full'>
-      <div className='max-w-4xl w-screen border-slate-700 border-2 p-4 rounded-md h-full relative'>
-        {messages.map((msg, index) => {
-          const isUser = msg.role === 'user'
-          if (msg.role === 'system') {
-            return null
-          }
+    <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0'>
+      {messages.map((msg, index) => {
+        const isUser = msg.role === 'user'
+        if (msg.role === 'system') {
+          return null
+        }
 
-          if (isUser) {
-            return (
-              <div key={index} className='chat chat-end'>
-                <div className='chat-image avatar'>
-                  <div className='w-10 rounded-full'>
-                    <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-                  </div>
+        if (isUser) {
+          return (
+            <div key={index} className='chat chat-end'>
+              <div className='chat-image avatar'>
+                <div className='w-10 rounded-full'>
+                  <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                 </div>
-                <div className='chat-header'>
-                  Anakin
-                  <time className='text-xs opacity-50'>12:46</time>
-                </div>
-                <div className='chat-bubble'>{msg.content}</div>
-                <div className='chat-footer opacity-50'>Seen at 12:46</div>
               </div>
-            )
-          } else {
-            // console.log(msg)
-            return (
-              <div key={index} className='chat chat-start'>
-                <div className='chat-image avatar'>
-                  <div className='w-10 rounded-full'>
-                    <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-                  </div>
-                </div>
-                <div className='chat-header'>
-                  Obi-Wan Kenobi
-                  <time className='text-xs opacity-50'>12:45</time>
-                </div>
-                <div className='chat-bubble'>{msg.content}</div>
-                <div className='chat-footer opacity-50'>Delivered</div>
+              <div className='chat-header'>
+                Anakin
+                <time className='text-xs opacity-50'>12:46</time>
               </div>
-            )
-          }
-        })}
+              <div className='chat-bubble'>{msg.content}</div>
+              <div className='chat-footer opacity-50'>Seen at 12:46</div>
+            </div>
+          )
+        } else {
+          // console.log(msg)
+          return (
+            <div key={index} className='chat chat-start'>
+              <div className='chat-image avatar'>
+                <div className='w-10 rounded-full'>
+                  <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
+                </div>
+              </div>
+              <div className='chat-header'>
+                Obi-Wan Kenobi
+                <time className='text-xs opacity-50'>12:45</time>
+              </div>
+              <div className='chat-bubble'>{msg.content}</div>
+              <div className='chat-footer opacity-50'>Delivered</div>
+            </div>
+          )
+        }
+      })}
 
-        <form
-          className='absolute bottom-0 left-0 right-0 flex items-center p-4 justify-between'
-          onSubmit={handleSubmit}
-        >
-          <input
-            type='text'
-            placeholder='Type here'
-            className='input input-bordered input-info basis-full mt-auto focus:ring-0 focus:outline-0'
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button className='btn btn-primary ml-2'>Send</button>
-        </form>
-      </div>
+      <form
+        className='sticky bottom-0  left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4'
+        onSubmit={handleSubmit}
+      >
+        <input
+          type='text'
+          placeholder='Type here'
+          className='input input-bordered input-info basis-full mt-auto focus:ring-0 focus:outline-0'
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button className='btn btn-primary ml-2'>Send</button>
+      </form>
     </div>
   )
 }

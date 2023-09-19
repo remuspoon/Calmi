@@ -1,14 +1,15 @@
+import { Question } from '@/services/sanity/schema/preChatSurvey'
 import React from 'react'
 
 type Params = {
-  surveyGetter: () => Promise<any[]>
+  Questions: Question[]
 }
-async function Survey({ surveyGetter }: Params) {
-  const survey = await surveyGetter()
+function Survey({ Questions }: Params) {
   return (
     <div>
-      {survey.map((question, i) => (
-        <p key={i}>{survey}</p>
+      hey boy
+      {Questions.map((question, i) => (
+        <p key={i}>{question.question}</p>
       ))}
     </div>
   )
