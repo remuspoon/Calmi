@@ -34,7 +34,7 @@ export const createChat = (uid: string) => {
 }
 
 // add message to messages collection at users/{uid}/chats/{chatID}/messages
-export const addMessage = async (
+export const addMessageToFirestore = async (
   uid: string,
   chatID: string,
   message: ChatCompletionMessageParam | ChatCompletionMessageParam[]

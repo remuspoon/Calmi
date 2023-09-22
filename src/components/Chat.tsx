@@ -1,6 +1,9 @@
 'use client'
 import { sendMessage } from '@/lib/sendMessage'
+import { addMessageToFirestore } from '@/services/firebase/firestore'
 import React, { FormEvent, useEffect, useState } from 'react'
+import { useUser } from './UserProvider'
+import { useParams } from 'next/navigation'
 
 export type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant'
@@ -10,9 +13,12 @@ function Chat() {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
+  const user = useUser()
+  const chatID = useParams().chatID as string
 
   useEffect(() => {
-    const initializeChat = () => {
+    const initializeChat = async () => {
+      if (!user?.uid || !chatID) return
       const systemMessage: ChatCompletionMessageParam = {
         role: 'system',
         content:
@@ -24,6 +30,11 @@ function Chat() {
           "Hello there! I'm Li, I am here to help you deal with your negative feelings! On a scale of 1-10 (1 being the worst you've ever felt and 10 being the best you've ever felt), how are you feeling right now?"
       }
       setMessages([systemMessage, welcomeMessage])
+
+      await addMessageToFirestore(user.uid, chatID, [
+        systemMessage,
+        welcomeMessage
+      ])
     }
 
     // When no messages are present, we initialize the chat the system message and the welcome message
@@ -31,7 +42,9 @@ function Chat() {
     if (!messages?.length) {
       initializeChat()
     }
-  }, [messages])
+  }, [chatID, messages, user?.uid])
+
+  if (!user?.uid || !chatID) return null
 
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
@@ -50,6 +63,7 @@ function Chat() {
 
       // Add the assistant message to the state
       setMessages((prevmsg) => [...prevmsg, reply])
+      await addMessageToFirestore(user.uid, chatID, [newMessage, reply])
     } catch (error) {
       // Show error when something goes wrong
       // addToast({ title: 'An error occurred', type: 'error' })
