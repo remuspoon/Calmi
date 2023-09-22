@@ -1,9 +1,13 @@
 'use client'
 import { sendMessage } from '@/lib/sendMessage'
-import { addMessageToFirestore } from '@/services/firebase/firestore'
+import {
+  addMessageToFirestore,
+  getMessagesFromFirestore
+} from '@/services/firebase/firestore'
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useUser } from './UserProvider'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 
 export type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant'
@@ -19,6 +23,9 @@ function Chat() {
   useEffect(() => {
     const initializeChat = async () => {
       if (!user?.uid || !chatID) return
+      const m = await getMessagesFromFirestore(user.uid, chatID)
+      setMessages(m)
+      if (m.length) return
       const systemMessage: ChatCompletionMessageParam = {
         role: 'system',
         content:
@@ -57,16 +64,16 @@ function Chat() {
       // Add the user message to the state so we can see it immediately
       setMessages((prvMsgs) => [...prvMsgs, newMessage])
 
+      await addMessageToFirestore(user.uid, chatID, newMessage)
       const reply = await sendMessage([...messages, newMessage])
 
       if (!reply) return
 
       // Add the assistant message to the state
       setMessages((prevmsg) => [...prevmsg, reply])
-      await addMessageToFirestore(user.uid, chatID, [newMessage, reply])
+      await addMessageToFirestore(user.uid, chatID, reply)
     } catch (error) {
-      // Show error when something goes wrong
-      // addToast({ title: 'An error occurred', type: 'error' })
+      console.log('Error sending message', error)
     } finally {
       setIsLoadingAnswer(false)
     }
@@ -91,32 +98,54 @@ function Chat() {
               <div key={index} className='chat chat-end'>
                 <div className='chat-image avatar'>
                   <div className='w-10 rounded-full'>
-                    <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
+                    <Image
+                      alt='user profile'
+                      src={user.photoURL || ''}
+                      width={40}
+                      height={40}
+                    />
                   </div>
                 </div>
                 <div className='chat-header'>
-                  Anakin
-                  <time className='text-xs opacity-50'>12:46</time>
+                  {user.displayName}
+                  {/* <time className='text-xs opacity-50'>12:46</time> */}
                 </div>
                 <div className='chat-bubble'>{msg.content}</div>
-                <div className='chat-footer opacity-50'>Seen at 12:46</div>
+                {/* <div className='chat-footer opacity-50'>Seen at 12:46</div> */}
               </div>
             )
           } else {
-            // console.log(msg)
             return (
               <div key={index} className='chat chat-start'>
                 <div className='chat-image avatar'>
-                  <div className='w-10 rounded-full'>
-                    <img src='/images/stock/photo-1534528741775-53994a69daeb.jpg' />
+                  <div className='w-10 rounded-full bg-slate-700 flex'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='24'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='mt-2 ml-2 text-green-500'
+                    >
+                      <path d='M12 8V4H8' />
+                      <rect width='16' height='12' x='4' y='8' rx='2' />
+                      <path d='M2 14h2' />
+                      <path d='M20 14h2' />
+                      <path d='M15 13v2' />
+                      <path d='M9 13v2' />
+                    </svg>
                   </div>
                 </div>
                 <div className='chat-header'>
-                  Obi-Wan Kenobi
-                  <time className='text-xs opacity-50'>12:45</time>
+                  CBT Bot
+                  {/* <time className='text-xs opacity-50'>12:45</time> */}
                 </div>
                 <div className='chat-bubble'>{msg.content}</div>
-                <div className='chat-footer opacity-50'>Delivered</div>
+                {/* <div className='chat-footer opacity-50'>Delivered</div> */}
               </div>
             )
           }

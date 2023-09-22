@@ -1,6 +1,10 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
 
 export const sendMessage = async (messages: ChatCompletionMessageParam[]) => {
+  messages = messages.map((m) => ({
+    role: m.role,
+    content: m.content
+  }))
   try {
     const response = await fetch('/chat/api', {
       method: 'POST',

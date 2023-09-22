@@ -1,10 +1,16 @@
 import {
+  Timestamp,
   addDoc,
   collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
-  serverTimestamp
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  where
 } from 'firebase/firestore'
 import app from '.'
 import { ChatCompletionMessageParam } from '@/components/Chat'
@@ -50,5 +56,28 @@ export const addMessageToFirestore = async (
       })
     })
   )
+}
+
+export const getMessagesFromFirestore = async (
+  uid: string,
+  chatID: string,
+  minTimestamp = new Date()
+) => {
+  const q = query(
+    collection(db, messagesPath(uid, chatID)),
+    where('timeStamp', '<=', minTimestamp),
+    orderBy('timeStamp', 'desc'),
+    limit(10)
+  )
+
+  const querySnapshot = await getDocs(q)
+
+  const messages: ChatCompletionMessageParam[] = []
+
+  querySnapshot.forEach((doc) => {
+    messages.push(doc.data() as ChatCompletionMessageParam)
+  })
+
+  return messages.reverse()
 }
 export default db
