@@ -100,10 +100,14 @@ function Survey({ Questions }: Params) {
             break
         }
       })}
-
-      <Link href={path + '?currentStep=1'} className='btn btn-accent mt-8'>
-        {currentStep === 0 ? 'Lets Chat' : 'Submit'}
-      </Link>
+      <div className='flex justify-around'>
+        <Link href={path + '?currentStep=1'} className='btn btn-neutral mt-8'>
+          Skip
+        </Link>
+        <Link href={path + '?currentStep=1'} className='btn btn-accent mt-8'>
+          {currentStep === 0 ? 'Lets Chat' : 'Submit'}
+        </Link>
+      </div>
     </div>
   )
 }
