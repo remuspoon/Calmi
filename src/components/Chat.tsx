@@ -61,8 +61,8 @@ function Chat() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     if (isLoadingAnswer) return
     e.preventDefault()
-    await addMessage(message)
     setMessage('')
+    await addMessage(message)
   }
   return (
     <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col'>
