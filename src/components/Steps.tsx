@@ -1,15 +1,33 @@
+import Link from 'next/link'
 import React from 'react'
 
-function Steps({ currentStep }: { currentStep: number }) {
+function Steps({
+  currentStep,
+  chatID
+}: {
+  currentStep: number
+  chatID: string
+}) {
   return (
-    <ul className='steps sticky top-0'>
-      <li className={`step ${currentStep >= 0 && 'step-info'}`}>
+    <ul className='steps mt-16'>
+      <Link
+        href={'/chat/' + chatID + '?currentStep=0'}
+        className={`step ${currentStep >= 0 && 'step-info'}`}
+      >
         Pre-Chat Survey
-      </li>
-      <li className={`step ${currentStep >= 1 && 'step-info'}`}>Chat</li>
-      <li className={`step ${currentStep >= 2 && 'step-info'}`}>
+      </Link>
+      <Link
+        href={'/chat/' + chatID + '?currentStep=1'}
+        className={`step ${currentStep >= 1 && 'step-info'}`}
+      >
+        Chat
+      </Link>
+      <Link
+        href={'/chat/' + chatID + '?currentStep=2'}
+        className={`step ${currentStep >= 2 && 'step-info'}`}
+      >
         Post-Chat Survey
-      </li>
+      </Link>
     </ul>
   )
 }

@@ -4,9 +4,11 @@ import Survey from '@/components/Survey'
 import { getSurvey } from '@/services/sanity/lib/queries'
 
 async function ChatPage({
-  searchParams
+  searchParams,
+  params
 }: {
   searchParams: { currentStep: number }
+  params: { chatID: string }
 }) {
   const currentStep = Number(searchParams.currentStep) || 0
   const surveys = await getSurvey()
@@ -19,7 +21,7 @@ async function ChatPage({
   console.log('post', postchatSurvey)
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
-      <Steps currentStep={currentStep} />
+      <Steps currentStep={currentStep} chatID={params?.chatID} />
       {currentStep === 0 && <Survey Questions={prechatSurvey} />}
       {currentStep === 1 && <Chat />}
       {currentStep === 2 && <Survey Questions={postchatSurvey} />}
