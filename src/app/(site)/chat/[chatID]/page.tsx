@@ -16,9 +16,6 @@ async function ChatPage({
     surveys.find((s) => s.title === 'preChatSurvey')?.questions || []
   const postchatSurvey =
     surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
-
-  console.log('pre', prechatSurvey)
-  console.log('post', postchatSurvey)
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
       <Steps currentStep={currentStep} chatID={params?.chatID} />
