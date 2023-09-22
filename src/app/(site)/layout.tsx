@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
+import ChatButton from '@/components/ChatButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -50,12 +51,7 @@ export default function RootLayout({
               <Link href={'/about'} className='btn btn-sm'>
                 about
               </Link>
-              <Link
-                href={'/chat/anonymous'}
-                className='btn btn-sm btn-outline btn-accent'
-              >
-                Try CBT
-              </Link>
+              <ChatButton label='Try CBT' />
             </div>
           </nav>
           {children}

@@ -1,3 +1,4 @@
+import ChatButton from '@/components/ChatButton'
 import Link from 'next/link'
 
 export default function Home() {
@@ -12,10 +13,7 @@ export default function Home() {
         evidence-based techniques that can help improve your mental well-being
         and promote positive change.
       </p>
-      <Link href={'/chat/anonymous'} className='btn btn-accent mt-8'>
-        {' '}
-        Start Quick Chat
-      </Link>
+      <ChatButton label=' Start Quick Chat' />
     </div>
   )
 }
