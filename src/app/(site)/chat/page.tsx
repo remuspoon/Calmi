@@ -1,6 +1,7 @@
 'use client'
 import { getChats } from '@/services/firebase/firestore'
-import { redirect, useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 function ChatDashboard() {
@@ -20,23 +21,17 @@ function ChatDashboard() {
         setChats(chats)
       } catch (error) {
         console.log(error)
-        redirect('/')
+        router.replace('/')
       }
     }
     f()
-  }, [])
-  // let chats = []
-  // console.log(uid)
-  // try {
-  //   chats = await getChats(uid)
-  // } catch (error) {
-  //   console.log(error)
-  //   redirect('/')
-  // }
+  }, [uid, router])
   return (
     <div>
       {chats.map((c) => (
-        <p key={c.id}>{c.id!}</p>
+        <Link href={`/chat/${c.id}?currentStep=1`} key={c.id}>
+          {c.id!}
+        </Link>
       ))}
     </div>
   )

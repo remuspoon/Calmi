@@ -6,18 +6,19 @@ import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 function MyChatButton() {
-  const uid = useUser()?.uid
+  const user = useUser()
   const router = useRouter()
   const pathName = usePathname()
   useEffect(() => {
     if (pathName !== '/chat') return
-    if (!uid) {
+    if (user !== 'loading' && !user?.uid) {
       router.replace('/')
     }
-  }, [pathName, uid])
+  }, [pathName, router, user])
+  if (user === 'loading') return null
   return (
     <Link
-      href={'/chat?uid=' + uid}
+      href={'/chat?uid=' + user?.uid}
       className='btn-sm sm:btn-md btn btn-info btn-outline'
     >
       My Chats

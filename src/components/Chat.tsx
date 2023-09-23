@@ -19,10 +19,9 @@ function Chat() {
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
-  // console.log(messages)
   useEffect(() => {
     const initializeChat = async () => {
-      if (!user?.uid || !chatID) return
+      if (user === 'loading' || !user || !chatID) return
       const m = await getMessagesFromFirestore(user.uid, chatID)
       setMessages(m)
       if (m.length) return
@@ -49,9 +48,9 @@ function Chat() {
     if (!messages?.length) {
       initializeChat()
     }
-  }, [chatID, messages, user?.uid])
+  }, [chatID, messages, user])
 
-  if (!user?.uid || !chatID) return null
+  if (user === 'loading' || !user || !chatID) return null
 
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
