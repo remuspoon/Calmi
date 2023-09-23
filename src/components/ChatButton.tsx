@@ -13,8 +13,8 @@ function ChatButton({ label }: { label: string }) {
     if (!user) {
       user = await SigninWithGoogle()
     }
-    const chatId = createChat(user.uid).id
-    router.push(`/chat/${chatId}`)
+    const chat = await createChat(user.uid)
+    router.push(`/chat/${chat.id}`)
   }
   return (
     <button

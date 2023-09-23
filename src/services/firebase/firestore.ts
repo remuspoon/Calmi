@@ -41,12 +41,16 @@ export const getChats = async (uid: string) => {
   querySnapshot.forEach((doc) => {
     chats.push({ ...doc.data(), id: doc.id })
   })
+
+  console.log('chats', chats)
   return chats
 }
 
 // create chat document at users/{uid}/chats/{chatID}
-export const createChat = (uid: string) => {
-  const chatDocRef = doc(collection(db, 'users', uid, 'chats'))
+export const createChat = async (uid: string) => {
+  const chatDocRef = await addDoc(collection(db, chatPath(uid)), {
+    timeStamp: serverTimestamp()
+  })
   return chatDocRef
 }
 

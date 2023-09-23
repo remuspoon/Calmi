@@ -19,7 +19,7 @@ function Chat() {
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
-
+  // console.log(messages)
   useEffect(() => {
     const initializeChat = async () => {
       if (!user?.uid || !chatID) return
