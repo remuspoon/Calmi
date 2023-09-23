@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import ChatButton from '@/components/ChatButton'
+import MyChatButton from '@/components/MyChatButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,7 +27,7 @@ export default function RootLayout({
         }
       >
         <UserProvider>
-          <nav className='absolute top-0 w-screen flex items-center gap-2 px-10 py-3 border-b border-slate-600 shadow-md shadow-slate-800'>
+          <nav className='absolute top-0 w-screen flex items-center gap-2 px-5 py-3 border-b border-slate-600 shadow-md shadow-slate-800'>
             <Link href={'/'} className='flex gap-2'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -48,12 +49,17 @@ export default function RootLayout({
               </h1>
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
-              <Link href={'/about'} className='btn btn-sm'>
+              <Link
+                href={'/about'}
+                className='btn btn-sm sm:inline-flex hidden '
+              >
                 about
               </Link>
-              <ChatButton label='Try CBT' />
+              <MyChatButton />
+              <ChatButton label='topNav' />
             </div>
           </nav>
+
           {children}
         </UserProvider>
       </body>

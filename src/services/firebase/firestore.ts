@@ -33,6 +33,17 @@ export const getUser = async (id: string) => {
   }
 }
 
+// get All chats
+export const getChats = async (uid: string) => {
+  const q = query(collection(db, chatPath(uid)))
+  const querySnapshot = await getDocs(q)
+  const chats: any[] = []
+  querySnapshot.forEach((doc) => {
+    chats.push({ ...doc.data(), id: doc.id })
+  })
+  return chats
+}
+
 // create chat document at users/{uid}/chats/{chatID}
 export const createChat = (uid: string) => {
   const chatDocRef = doc(collection(db, 'users', uid, 'chats'))

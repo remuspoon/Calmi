@@ -8,6 +8,7 @@ import { createChat } from '@/services/firebase/firestore'
 function ChatButton({ label }: { label: string }) {
   const router = useRouter()
   let user = useUser()
+  const topNavLabel = user ? 'New Chat' : 'Sign in to chat'
   const handleClick = async () => {
     if (!user) {
       user = await SigninWithGoogle()
@@ -16,8 +17,11 @@ function ChatButton({ label }: { label: string }) {
     router.push(`/chat/${chatId}`)
   }
   return (
-    <button className='btn btn-accent btn-outline' onClick={handleClick}>
-      {label}
+    <button
+      className='btn btn-accent btn-outline btn-sm sm:btn-md'
+      onClick={handleClick}
+    >
+      {label === 'topNav' ? topNavLabel : label}
     </button>
   )
 }

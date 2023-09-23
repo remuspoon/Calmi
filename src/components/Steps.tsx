@@ -9,7 +9,7 @@ function Steps({
   chatID: string
 }) {
   return (
-    <ul className='steps mt-20'>
+    <ul className='steps'>
       <Link
         href={'/chat/' + chatID + '?currentStep=0'}
         className={`step ${currentStep >= 0 && 'step-info'}`}
