@@ -1,5 +1,5 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
-import { chatCompletions } from '.'
+import openai, { chatCompletions } from '.'
 import { isSuicidal } from './helper'
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
@@ -41,6 +41,15 @@ const RESPONSES = [
       )
     }
   },
+
+  (messages: ChatCompletionMessageParam[]) =>
+  openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages: 
+      [...messages, { role: 'system', content: "Fill in this statement:Let's breakdown the situation together so we can understand it better. Why do you think [user situation] makes you feel [state user emotional state based on this prompt: {emotion_input}]? I want you to list out as many reasons why it might make you feel this way." }],
+    max_tokens: 150,
+    temperature: 0.7      
+  }),
 
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
