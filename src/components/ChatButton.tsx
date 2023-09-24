@@ -10,7 +10,7 @@ function ChatButton({ label }: { label: string }) {
   let user = useUser()
   const topNavLabel = user ? 'New Chat' : 'Sign in to chat'
   const handleClick = async () => {
-    if (!user) {
+    if (!user || user === 'loading') {
       user = await SigninWithGoogle()
     }
     const chat = await createChat(user.uid)
