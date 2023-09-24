@@ -1,5 +1,5 @@
 'use client'
-import { sendMessage } from '@/lib/sendMessage'
+import { getbotReply } from '@/lib/sendMessage'
 import {
   addMessageToFirestore,
   getMessagesFromFirestore
@@ -24,6 +24,19 @@ function Chat() {
       if (user === 'loading' || !user || !chatID) return
       const m = await getMessagesFromFirestore(user.uid, chatID)
       setMessages(m)
+      const isForBot = m[m.length - 1]?.role === 'user'
+
+      if (isForBot) {
+        const reply = await getbotReply(m)
+
+        if (!reply) return
+
+        // Add the assistant message to the state
+        setMessages((prevmsg) => [...prevmsg, reply])
+        await addMessageToFirestore(user.uid, chatID, reply)
+      }
+
+      console.log('isfrobot', isForBot)
       if (m.length) return
       const systemMessage: ChatCompletionMessageParam = {
         role: 'system',
@@ -63,7 +76,7 @@ function Chat() {
       setMessages((prvMsgs) => [...prvMsgs, newMessage])
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
-      const reply = await sendMessage([...messages, newMessage])
+      const reply = await getbotReply([...messages, newMessage])
 
       if (!reply) return
 

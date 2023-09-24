@@ -80,8 +80,8 @@ export const getMessagesFromFirestore = async (
   const q = query(
     collection(db, messagesPath(uid, chatID)),
     where('timeStamp', '<=', minTimestamp),
-    orderBy('timeStamp', 'desc'),
-    limit(10)
+    orderBy('timeStamp', 'desc')
+    // limit(10)
   )
 
   const querySnapshot = await getDocs(q)

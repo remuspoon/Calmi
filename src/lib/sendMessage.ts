@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
 
-export const sendMessage = async (messages: ChatCompletionMessageParam[]) => {
+export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
   messages = messages.map((m) => ({
     role: m.role,
     content: m.content
