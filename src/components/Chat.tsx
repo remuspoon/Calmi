@@ -28,10 +28,11 @@ function Chat() {
 
       if (isForBot) {
         const reply = await getbotReply(m)
-
+        console.log(reply)
         if (!reply) return
 
         // Add the assistant message to the state
+        console.log('reply', reply)
         setMessages((prevmsg) => [...prevmsg, reply])
         await addMessageToFirestore(user.uid, chatID, reply)
       }

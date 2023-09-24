@@ -5,9 +5,13 @@ const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages.findLastIndex(
     (message) => message.role === 'user'
   )
-  console.log('hey')
-  const response = await RESPONSES[currentMessage](messages)
-
+  // console.log('messages', messages)
+  // console.log('cm', currentMessage)
+  const response = await chatCompletions(
+    messages,
+    'ask to describe their emotions'
+  )
+  console.log('response', response)
   return response.choices[0].message.content
 }
 

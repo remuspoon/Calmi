@@ -1,10 +1,12 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
 
 export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
-  messages = messages.map((m) => ({
-    role: m.role,
-    content: m.content
-  }))
+  messages = messages
+    .filter((m) => m?.role)
+    .map((m) => ({
+      role: m.role,
+      content: m.content
+    }))
   try {
     const response = await fetch('/chat/api', {
       method: 'POST',
@@ -15,8 +17,11 @@ export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
     })
 
     const reply = await response.json()
-
-    return reply.response as ChatCompletionMessageParam
+    console.log(reply.reply)
+    return {
+      role: 'assistant',
+      content: reply.reply
+    } as ChatCompletionMessageParam
   } catch (error) {
     console.log(error)
   }
