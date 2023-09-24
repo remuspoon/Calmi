@@ -27,7 +27,7 @@ export default function RootLayout({
         }
       >
         <UserProvider>
-          <nav className='absolute top-0 w-screen flex items-center gap-2 px-5 py-3 border-b border-slate-600 shadow-md shadow-slate-800'>
+          <nav className='sticky z-10 bg-slate-900 bg-opacity-25 backdrop-blur top-0 w-screen flex items-center gap-2 px-5 py-3 border-b border-slate-600 shadow-lg shadow-slate-800'>
             <Link href={'/'} className='flex gap-2'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -60,7 +60,7 @@ export default function RootLayout({
             </div>
           </nav>
 
-          {children}
+          <main className='flex-grow mt-5'>{children}</main>
         </UserProvider>
       </body>
     </html>

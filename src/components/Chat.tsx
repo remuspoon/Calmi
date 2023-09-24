@@ -32,8 +32,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam = {
         role: 'assistant',
-        content:
-          "Hello there! I'm Li, I am here to help you deal with your negative feelings! On a scale of 1-10 (1 being the worst you've ever felt and 10 being the best you've ever felt), how are you feeling right now?"
+        content: `Hello ${user.displayName}! I'm Li, I am here to help you deal with your negative feelings! On a scale of 1-10 (1 being the worst you've ever felt and 10 being the best you've ever felt), how are you feeling right now?`
       }
       setMessages([systemMessage, welcomeMessage])
 

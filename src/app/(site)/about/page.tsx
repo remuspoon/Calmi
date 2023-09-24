@@ -1,7 +1,7 @@
 import React from 'react'
 
 function About() {
-  return <div>About Page</div>
+  return <div className='flex-grow'>About Page</div>
 }
 
 export default About
