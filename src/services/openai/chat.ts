@@ -2,16 +2,11 @@ import { ChatCompletionMessageParam } from '@/components/Chat'
 import { chatCompletions } from '.'
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
-  const currentMessage = messages.findLastIndex(
-    (message) => message.role === 'user'
-  )
-  // console.log('messages', messages)
-  // console.log('cm', currentMessage)
-  const response = await chatCompletions(
-    messages,
-    'ask to describe their emotions'
-  )
-  console.log('response', response)
+  const currentMessage = messages
+    .filter((m) => m.role === 'user')
+    .findLastIndex((message) => message.role === 'user')
+  const response = await RESPONSES[currentMessage](messages)
+
   return response.choices[0].message.content
 }
 
