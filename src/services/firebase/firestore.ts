@@ -2,6 +2,7 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -102,6 +103,11 @@ export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
   if (surveySnap.exists()) {
     return surveySnap.data()
   }
+}
+
+export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
+  const chatDocRef = doc(db, chatPath(uid), chatID)
+  await deleteDoc(chatDocRef)
 }
 
 export const addSurveyToFirestore = async (
