@@ -1,6 +1,9 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
 import openai, { chatCompletions } from '.'
 import { isSuicidal } from './helper'
+// import APIPromise from 'openai'
+// import ChatCompletion from 'openai'
+// import { ChatCompletion } from 'openai/resources/chat/index.mjs'
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
@@ -8,7 +11,7 @@ const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
     .findLastIndex((message) => message.role === 'user')
   const response = await RESPONSES[currentMessage](messages)
 
-  return response.choices[0].message.content
+  return (response as any).choices[0].message.content
 }
 
 const RESPONSES = [
@@ -25,21 +28,20 @@ const RESPONSES = [
   //   ),
 
   async (messages: ChatCompletionMessageParam[]) => {
-    if (
-      await isSuicidal(
-        messages.findLast((m) => m.role === 'user')?.content || ''
-      )
-    ) {
-      return chatCompletions(
-        messages,
-        "just say I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
-      )
-    } else {
-      return chatCompletions(
-        messages,
-        "In 3 sentences or less, empathize with the user's feelings and situation. Do not offer solutions. and ask to try a CBT exercise together to see if it helps feel better! Also ask to list out some automatic thoughts or images that come to mind when this event happened."
-      )
-    }
+     if (
+       await isSuicidal(
+         messages.findLast((m) => m.role === 'user')?.content || ''
+       )
+     ) {
+    //  return new Promise((resolve,reject)=>{
+    //    resolve({choices:[{message:{content:'Sorry'}}]} as any )
+    //  })
+     } else {
+       return chatCompletions(
+         messages,
+         "In 3 sentences or less, empathize with the user's feelings and situation. Do not offer solutions. and ask to try a CBT exercise together to see if it helps feel better! Also ask to list out some automatic thoughts or images that come to mind when this event happened."
+       )
+     }
   },
 
   (messages: ChatCompletionMessageParam[]) =>
