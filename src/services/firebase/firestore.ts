@@ -10,6 +10,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   where
 } from 'firebase/firestore'
 import app from '.'
@@ -94,4 +95,22 @@ export const getMessagesFromFirestore = async (
 
   return messages.reverse()
 }
+
+export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
+  const surveyDocRef = doc(db, surveyPath(uid, chatID))
+  const surveySnap = await getDoc(surveyDocRef)
+  if (surveySnap.exists()) {
+    return surveySnap.data()
+  }
+}
+
+export const addSurveyToFirestore = async (
+  uid: string,
+  chatID: string,
+  survey: any
+) => {
+  const surveyDocRef = doc(db, surveyPath(uid, chatID))
+  await setDoc(surveyDocRef, survey)
+}
+
 export default db
