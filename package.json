@@ -22,6 +22,7 @@
     "firebase": "^10.3.1",
     "next": "13.4.19",
     "next-sanity": "^5.5.3",
+    "nextjs-toploader": "^1.4.2",
     "openai": "^4.6.0",
     "postcss": "8.4.29",
     "react": "18.2.0",
@@ -33,6 +34,8 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
-    "daisyui": "^3.7.4"
+    "daisyui": "^3.7.4",
+    "nprogress": "^0.2.0",
+    "react-spinners": "^0.13.8"
   }
 }

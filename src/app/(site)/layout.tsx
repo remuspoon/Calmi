@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import ChatButton from '@/components/ChatButton'
 import MyChatButton from '@/components/MyChatButton'
+import NextTopLoader from 'nextjs-toploader'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
           ' flex flex-col justify-center items-center min-h-screen'
         }
       >
+        <NextTopLoader />
         <UserProvider>
           <nav className='sticky z-10 bg-slate-900 bg-opacity-25 backdrop-blur top-0 w-screen flex items-center gap-2 px-5 py-3 border-b border-slate-600 shadow-lg shadow-slate-800'>
             <Link href={'/'} className='flex gap-2'>
