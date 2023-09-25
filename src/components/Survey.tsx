@@ -1,8 +1,15 @@
 'use client'
+import { addSurveyToFirestore } from '@/services/firebase/firestore'
 import { Question, SanitySubmeta } from '@/services/sanity/schema/survey'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams
+} from 'next/navigation'
 import React, { useState } from 'react'
+import { useUser } from './UserProvider'
 
 type Params = {
   Questions: (SanitySubmeta & Question)[]
@@ -11,8 +18,19 @@ function Survey({ Questions }: Params) {
   const [completed, setCompleted] = useState(0)
   const [form, setForm] = useState<Record<string, any>>({})
   const router = useRouter()
-  const handleSubmit = () => {
-    console.log(form)
+  const user = useUser()
+  const path = usePathname()
+  const chatID = useParams().chatID as string
+  const currentStep = Number(useSearchParams().get('currentStep'))
+
+  if (!user || user === 'loading' || !chatID) return null
+  const handleSubmit = async () => {
+    await addSurveyToFirestore(
+      user.uid,
+      chatID,
+      currentStep === 2 ? 'post' : 'pre',
+      form
+    )
   }
 
   const handleChange = (e: React.ChangeEvent<any>) => {
@@ -36,8 +54,6 @@ function Survey({ Questions }: Params) {
 
     setForm((prev) => ({ ...prev, [name]: value }))
   }
-  const path = usePathname()
-  const currentStep = Number(useSearchParams().get('currentStep'))
   return (
     <div className='mt-5 p-4'>
       <p>
