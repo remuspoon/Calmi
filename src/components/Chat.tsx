@@ -97,8 +97,8 @@ function Chat() {
     await addMessage(message)
   }
   return (
-    <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col'>
-      <div className='grow'>
+    <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl'>
+      <div className='grow w-full'>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
           if (msg.role === 'system') {

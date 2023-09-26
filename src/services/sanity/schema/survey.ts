@@ -8,11 +8,17 @@ export type Sanitymeta = {
   _updatedAt: string
 }
 
+export type SanitySubmeta = {
+  _key: string
+  _type: string
+}
+
 export type Question = {
   label: string
   type: 'short' | 'long' | 'radio' | 'select'
   question: string
   options?: string[]
+  required?: boolean
 }
 
 export const QuestionFields = [
@@ -96,7 +102,7 @@ const Schema = defineType({
 
 export type Survey = Sanitymeta & {
   title: 'preChatSurvey' | 'postChatSurvey'
-  questions: Question[]
+  questions: (SanitySubmeta & Question)[]
 }
 
 export default Schema

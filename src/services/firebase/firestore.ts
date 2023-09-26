@@ -2,6 +2,7 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -10,6 +11,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   where
 } from 'firebase/firestore'
 import app from '.'
@@ -94,4 +96,27 @@ export const getMessagesFromFirestore = async (
 
   return messages.reverse()
 }
+
+export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
+  const surveyDocRef = doc(db, surveyPath(uid, chatID))
+  const surveySnap = await getDoc(surveyDocRef)
+  if (surveySnap.exists()) {
+    return surveySnap.data()
+  }
+}
+
+export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
+  const chatDocRef = doc(db, chatPath(uid), chatID)
+  await deleteDoc(chatDocRef)
+}
+
+export const addSurveyToFirestore = async (
+  uid: string,
+  chatID: string,
+  survey: any
+) => {
+  const surveyDocRef = doc(db, surveyPath(uid, chatID))
+  await setDoc(surveyDocRef, survey)
+}
+
 export default db

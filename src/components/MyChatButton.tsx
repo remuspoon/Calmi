@@ -15,7 +15,7 @@ function MyChatButton() {
       router.replace('/')
     }
   }, [pathName, router, user])
-  if (user === 'loading') return null
+  if (user === 'loading' || !user) return null
   return (
     <Link
       href={'/chat?uid=' + user?.uid}
