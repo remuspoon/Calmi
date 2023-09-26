@@ -6,17 +6,11 @@ export const isSuicidal = async (text: string) => {
   const result = await openai.completions.create({
     model: 'text-davinci-002',
     prompt,
-    max_tokens: 1,
-    temperature: 0,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    stop: ['\n']
+    temperature: 0
   })
 
   const response = result.choices[0].text
-
-  return response === 'yes'
+  return response.toLowerCase().includes('yes')
 }
 
 export const provideEmpathy = async (text: string) => {}
