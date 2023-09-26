@@ -68,7 +68,7 @@ const RESPONSES = [
       temperature: 0.7,
       max_tokens: 200
     })
-    return { choices: [{ message: { content: rephrased } }] }
+    return { choices: [{ message: { content: rephrased.choices[0].text } }] }
   },
 
   (messages: ChatCompletionMessageParam[]) =>

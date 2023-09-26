@@ -98,7 +98,7 @@ function Chat() {
   }
   return (
     <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl'>
-      <div className='grow w-full'>
+      <div className='grow w-full print:grow-0'>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
           if (msg.role === 'system') {
@@ -164,7 +164,7 @@ function Chat() {
       </div>
 
       <form
-        className='sticky bottom-0 left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4'
+        className='sticky bottom-0 left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4 print:hidden'
         onSubmit={handleSubmit}
       >
         <input
