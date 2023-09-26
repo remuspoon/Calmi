@@ -1,9 +1,36 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
 import openai, { chatCompletions } from '.'
 import { isSuicidal } from './helper'
-// import APIPromise from 'openai'
-// import ChatCompletion from 'openai'
-// import { ChatCompletion } from 'openai/resources/chat/index.mjs'
+
+// Templates
+
+
+// Static message
+// async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)=>{
+//      resolve({choices:[{message:{content:'Sorry'}}]} as any )
+//    }),
+
+//////// Text Davinci
+//   const user = messages.findLast(m=>m.role==='user')?.content
+      // const rephrased = await openai.completions.create({
+      //   model:'text-davinci-002',
+      //   prompt: `rephrase this statement : ${user}`,
+      //   temperature:0.7,
+      //   max_tokens : 200
+      // })
+      // return {choices:[{message:{content:rephrased}}]}
+      // },
+
+//////// Normal GPT
+// (messages: ChatCompletionMessageParam[]) =>
+//     chatCompletions(
+//       messages,
+//       "say 'Great job identifying the strongest automatic thought for us to look at. Remember, our thoughts are not always helpful, so let's work together to rethink this thought into something more constructive!'"```
+//     ),
+
+
+
+
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
@@ -21,37 +48,35 @@ const RESPONSES = [
       'ask to describe their emotions. ask about What happened? What events led you to feel these negative emotions today? Please be as specific as possible.'
     ),
 
-  // (messages: ChatCompletionMessageParam[]) =>
-  //   chatCompletions(
-  //     messages,
-  //     'ask about What happened? What events led you to feel these negative emotions today? Please be as specific as possible.'
-  //   ),
-
   async (messages: ChatCompletionMessageParam[]) => {
-     if (
-       await isSuicidal(
-         messages.findLast((m) => m.role === 'user')?.content || ''
-       )
-     ) {
-    //  return new Promise((resolve,reject)=>{
-    //    resolve({choices:[{message:{content:'Sorry'}}]} as any )
-    //  })
-     } else {
-       return chatCompletions(
-         messages,
-         "In 3 sentences or less, empathize with the user's feelings and situation. Do not offer solutions. and ask to try a CBT exercise together to see if it helps feel better! Also ask to list out some automatic thoughts or images that come to mind when this event happened."
-       )
-     }
+    if (
+      await isSuicidal(
+        messages.findLast((m) => m.role === 'user')?.content || ''
+      )
+    ) {
+      return chatCompletions(
+        messages,
+        "just say I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
+      )
+    } else {
+      return chatCompletions(
+        messages,
+        "In 3 sentences or less, empathize with the user's feelings and situation. Do not offer solutions. and ask to try a CBT exercise together to see if it helps feel better! Also ask to list out some automatic thoughts or images that come to mind when this event happened."
+      )
+    }
   },
 
-  (messages: ChatCompletionMessageParam[]) =>
-  openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: 
-      [...messages, { role: 'system', content: "Fill in this statement:Let's breakdown the situation together so we can understand it better. Why do you think [user situation] makes you feel [state user emotional state based on this prompt: {emotion_input}]? I want you to list out as many reasons why it might make you feel this way." }],
-    max_tokens: 150,
-    temperature: 0.7      
-  }),
+  async (messages: ChatCompletionMessageParam[]) =>{
+  
+  const user = messages.findLast(m=>m.role==='user')?.content
+    const rephrased = await openai.completions.create({
+      model:'text-davinci-002',
+      prompt: ` rephrase this statement : ${user}`,
+      temperature:0.7,
+      max_tokens : 200
+    })
+    return {choices:[{message:{content:rephrased}}]}
+  },
 
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
