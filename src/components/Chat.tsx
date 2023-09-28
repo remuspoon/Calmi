@@ -41,7 +41,7 @@ function Chat() {
       const systemMessage: ChatCompletionMessageParam = {
         role: 'system',
         content:
-          "You are a therapeutic chat bot called 'Ms. Li' with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
+          "You are a therapeutic chat bot called 'Li' with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
       }
       const welcomeMessage: ChatCompletionMessageParam = {
         role: 'assistant',
