@@ -4,10 +4,11 @@ import {
   addMessageToFirestore,
   getMessagesFromFirestore
 } from '@/services/firebase/firestore'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import { useUser } from './UserProvider'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
+import html2pdf from 'html2pdf.js'
 
 export type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant'
@@ -19,6 +20,21 @@ function Chat() {
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
+  const ref = useRef<HTMLDivElement>(null)
+
+  const handlePrint = () => {
+    if (!ref.current) return
+
+    const opt = {
+      margin: 1,
+      filename: 'chat.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }
+
+    html2pdf().set(opt).from(ref.current).save()
+  }
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
@@ -96,9 +112,10 @@ function Chat() {
     setMessage('')
     await addMessage(message)
   }
+
   return (
     <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl'>
-      <div className='grow w-full'>
+      <div className='grow w-full print:grow-0' ref={ref}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
           if (msg.role === 'system') {
@@ -106,7 +123,7 @@ function Chat() {
           }
           if (isUser) {
             return (
-              <div key={index} className='chat chat-end'>
+              <div key={index} className='chat chat-end break-inside-avoid'>
                 <div className='chat-image avatar'>
                   <div className='w-10 rounded-full'>
                     <Image
@@ -127,7 +144,7 @@ function Chat() {
             )
           } else {
             return (
-              <div key={index} className='chat chat-start'>
+              <div key={index} className='chat chat-start break-inside-avoid'>
                 <div className='chat-image avatar'>
                   <div className='w-10 rounded-full bg-slate-700 flex'>
                     <svg
@@ -164,7 +181,7 @@ function Chat() {
       </div>
 
       <form
-        className='sticky bottom-0 left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4'
+        className='sticky bottom-0 left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4 print:hidden'
         onSubmit={handleSubmit}
       >
         <input
@@ -175,6 +192,12 @@ function Chat() {
           onChange={(e) => setMessage(e.target.value)}
         />
         <button className='btn btn-primary ml-2'>Send</button>
+        <button
+          className='btn btn-secondary ml-2 btn-outline btn-sm'
+          onClick={handlePrint}
+        >
+          print
+        </button>
       </form>
     </div>
   )

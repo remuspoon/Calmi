@@ -113,10 +113,11 @@ export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
 export const addSurveyToFirestore = async (
   uid: string,
   chatID: string,
-  survey: any
+  survey: 'pre' | 'post',
+  data: any
 ) => {
-  const surveyDocRef = doc(db, surveyPath(uid, chatID))
-  await setDoc(surveyDocRef, survey)
+  let docRef = doc(db, surveyPath(uid, chatID), survey)
+  await setDoc(docRef, data)
 }
 
 export default db

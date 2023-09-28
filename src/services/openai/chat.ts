@@ -4,7 +4,6 @@ import { isSuicidal } from './helper'
 
 // Templates
 
-
 // Static message
 // async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)=>{
 //      resolve({choices:[{message:{content:'Sorry'}}]} as any )
@@ -29,10 +28,6 @@ import { isSuicidal } from './helper'
 //       "say 'Great job identifying the strongest automatic thought for us to look at. Remember, our thoughts are not always helpful, so let's work together to rethink this thought into something more constructive!'"```
 //     ),
 
-
-
-
-
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
     .filter((m) => m.role === 'user')
@@ -53,11 +48,10 @@ const RESPONSES = [
      }),
 
   async (messages: ChatCompletionMessageParam[]) => {
-    if (
-      await isSuicidal(
-        messages.findLast((m) => m.role === 'user')?.content || ''
-      )
-    ) {
+    const suicidal = await isSuicidal(
+      messages.findLast((m) => m.role === 'user')?.content || ''
+    )
+    if (suicidal) {
       return chatCompletions(
         messages,
         "just say I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
