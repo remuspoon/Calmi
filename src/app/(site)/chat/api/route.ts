@@ -5,9 +5,9 @@ export async function POST(req: Request) {
   const body = await req.json()
   const messages = body?.messages
   try {
-    const reply = await getGptResponse(messages)
+    const reply = await getGptResponse(messages) // array
 
-    return NextResponse.json({ reply })
+    return NextResponse.json({ reply }) // reply:[]
   } catch (error: any) {
     console.log(error)
     return NextResponse.json({ error: error.message }, { status: 500 })

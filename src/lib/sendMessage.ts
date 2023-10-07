@@ -16,12 +16,18 @@ export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
       body: JSON.stringify({ messages })
     })
 
-    const reply = await response.json()
-    console.log(reply.reply)
-    return {
-      role: 'assistant',
-      content: reply.reply
-    } as ChatCompletionMessageParam
+    let reply = await response.json()
+    reply = reply.reply
+    // return {
+    //   role: 'assistant',
+    //   content: reply.reply
+    // } as ChatCompletionMessageParam
+
+    reply = reply.map((re:any)=>({role: 'assistant',
+      content: re}  as ChatCompletionMessageParam))
+
+    console.log(reply)
+    return reply
   } catch (error) {
     console.log(error)
   }

@@ -9,6 +9,8 @@ import { useUser } from './UserProvider'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
+import { TERMINATING_MESSAGE } from '@/lib/constants'
+
 
 export type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant'
@@ -21,6 +23,7 @@ function Chat() {
   const user = useUser()
   const chatID = useParams().chatID as string
   const ref = useRef<HTMLDivElement>(null)
+  const [endChat,setEndChat] = useState(false)
 
   const handlePrint = () => {
     if (!ref.current) return
@@ -35,6 +38,8 @@ function Chat() {
 
     html2pdf().set(opt).from(ref.current).save()
   }
+
+  // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
@@ -61,7 +66,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam = {
         role: 'assistant',
-        content: `Hello ${user.displayName}! I'm Li, I am here to help you deal with your negative feelings! On a scale of 1-10 (1 being the worst you've ever felt and 10 being the best you've ever felt), how are you feeling right now?`
+        content: `Hey ${user.displayName}! I'm Li, I am a chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 
@@ -92,12 +97,18 @@ function Chat() {
       setMessages((prvMsgs) => [...prvMsgs, newMessage])
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
-      const reply = await getbotReply([...messages, newMessage])
+      let reply = await getbotReply([...messages, newMessage])
 
       if (!reply) return
 
+      // end of the chat
+      if(reply[0].content.toLowerCase().includes(TERMINATING_MESSAGE.toLowerCase())){
+        setEndChat(true)
+      }
+
       // Add the assistant message to the state
-      setMessages((prevmsg) => [...prevmsg, reply])
+      
+      setMessages((prevmsg) => [...prevmsg, ...reply])
       await addMessageToFirestore(user.uid, chatID, reply)
     } catch (error) {
       console.log('Error sending message', error)
@@ -191,7 +202,7 @@ function Chat() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className='btn btn-primary ml-2'>Send</button>
+        <button className={`btn btn-primary ml-2 ${endChat && 'btn-disabled'}`} disabled={endChat}>Send</button>
         <button
           className='btn btn-secondary ml-2 btn-outline btn-sm'
           onClick={handlePrint}

@@ -1,10 +1,11 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
-import openai, { chatCompletions } from '.'
+import { chatCompletions } from '.'
 import { isSuicidal } from './helper'
+import { TERMINATING_MESSAGE } from '@/lib/constants'
 
 // Templates
 
-// Static message
+//////// Static message
 // async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)=>{
 //      resolve({choices:[{message:{content:'Sorry'}}]} as any )
 //    }),
@@ -28,24 +29,62 @@ import { isSuicidal } from './helper'
 //       "say 'Great job identifying the strongest automatic thought for us to look at. Remember, our thoughts are not always helpful, so let's work together to rethink this thought into something more constructive!'"```
 //     ),
 
+/////// Multi Responses
+// async (messages: ChatCompletionMessageParam[]) =>
+// new Promise(async (resolve,  reject)=>{
+//   const gptResponse = await chatCompletions(
+//     messages,
+//     "Empathize with user feelings"
+//   )
+//
+//   const gptREsponse2 = await chatCompletions(
+//     messages,
+//     "Empathize with user feelings"
+//   )
+//   const dv = async (messages: ChatCompletionMessageParam[]) =>{
+//     const user = messages.findLast(m=>m.role==='user')?.content
+//       const rephrased = await openai.completions.create({
+//         model:'text-davinci-002',
+//         prompt: `rephrase this statement : ${user}`,
+//         temperature:0.7,
+//         max_tokens : 200
+//       })
+//       return {choices:[{message:{content:rephrased}}]}
+//     },
+
+//     const dvResponse  = await dv(messages)
+
+//   resolve([sendStaticReply('Please describe to me your emotions.'),gptResponse,sendStaticReply(TERMINATING_MESSAGE),gptREsponse2,dvResponse] as any )
+//    }),
+
+///////Terminating message
+// async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)=>{
+//   resolve({choices:[{message:{content: TERMINATING_MESSAGE}}]} as any )
+// }),
+
+const sendStaticReply = (content:string)=> {return {choices:[{message:{content:content}}]}}
+
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
     .filter((m) => m.role === 'user')
     .findLastIndex((message) => message.role === 'user')
-  const response = await RESPONSES[currentMessage](messages)
+  let response = await RESPONSES[currentMessage](messages)
 
-  return (response as any).choices[0].message.content
+  // return (response as any).choices[0].message.content
+
+  if(!Array.isArray(response)){
+    response= [response]
+  }
+
+  return (response as any).map((res:any)=>res.choices[0].message.content)
 }
 
 const RESPONSES = [
   (messages: ChatCompletionMessageParam[]) =>
-  new Promise((resolve,  reject)=>{
-    resolve({choices:[{message:{content:'Please describe to me your emotions.'}}]} as any )
-     }),
-
-  async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)=>{
-    resolve({choices:[{message:{content:'What happened? What events led you to feel these negative emotions today? Please be as specific as possible.'}}]} as any )
-     }),
+  chatCompletions(
+    messages,
+    "Ask the user to clarify on either the situation that is troubling them or their feelings."
+  ),
 
   async (messages: ChatCompletionMessageParam[]) => {
     const suicidal = await isSuicidal(
@@ -59,20 +98,44 @@ const RESPONSES = [
     } else {
       return chatCompletions(
         messages,
-        "In 3 sentences or less, empathize with the user's feelings and situation. Do not offer solutions. Afterwards, fill in this statement:'Let's breakdown the situation together so we can understand it better. Why do you think [user situation] makes you feel [user emotions]? I want you to list out as many reasons why it might make you feel this way.'")
+        "In 3 sentences, empathize with the user's feelings and situation. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation.'")
     }
   },
   
-  // async (messages: ChatCompletionMessageParam[]) =>{
-  //   const autothoughts = await openai.completions.create({
-  //       model:'text-davinci-002',
-  //       prompt: `Summarise into the user's thoughts into absolute statements in second person perspective. Each statement must not be longer than 100 characters. Present it in a numbered list like this:[So it seems like these are your automatic thoughts: {Insert numbered list}}]`,
-  //       temperature:0.3,
-  //       max_tokens : 200
-  //     })
-  //     return {choices:[{message:{content:autothoughts}}]}
-  //   },
-  
+  (messages: ChatCompletionMessageParam[]) =>
+    chatCompletions(
+      messages,
+      "In 4 sentences, empathize with the user. Then, encourage the user to elaborate on their situation and feelings with an open-ended question. Do not repeat questions asked before."
+    ),
+    (messages: ChatCompletionMessageParam[]) =>
+    chatCompletions(
+      messages,
+      "In 3 sentences, verbalize the user's emotions in second person perspective. Afterwards, ask one question to gather more information on the user's situation. Do not repeat questions asked before."
+    ),
+
+    async (messages: ChatCompletionMessageParam[]) =>
+    new Promise(async (resolve,  reject)=>{
+    
+      const gptResponse = await chatCompletions(
+        messages,
+        "In 2 sentences, empathize with the client's emotional and cognitive frame of reference."
+      )
+
+      const gptResponse2 = await chatCompletions(
+        messages,
+        "In second person perspective, summarise the user's situation and feelings by highlighting the key ideas and the problems they're facing. Afterwards, ask the user if they think your judgement is correct."
+      )
+    
+      resolve([gptResponse,gptResponse2] as any )
+       }),
+
+    (messages: ChatCompletionMessageParam[]) =>
+    chatCompletions(
+      messages,
+      "Based on the whole conversation, summarise the user's feelings and situation. Afterwards, ask them if they want to try a 'Cognitive Restructuring' exercise to help."
+    ),
+/////////////////////////
+
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
@@ -124,6 +187,7 @@ async (messages: ChatCompletionMessageParam[]) => new Promise((resolve,  reject)
       messages,
       'Fill in:[When we started out you were feeling {insert user feeling} because of your belief that {insert user automatic thought}.You realised that it was not helping and replaced it with a new thought: {insert user thought}. Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have wonderful day :)]'
     )
+
 ]
 
 export default getGptResponse
