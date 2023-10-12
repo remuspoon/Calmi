@@ -223,7 +223,9 @@ const RESPONSES = [
       )
       resolve([
         gptResponse,
+        
         sendStaticReply("You challenge your thought based on a clearer perspective, and craft a balanced, realistic alternative response. Now, whenever the negative thought arises, try to replace it with this new thought. Over time, this practice will not only shift your thinking patterns but also positively influence your emotions and actions, leading to healthier responses to situations."),
+
         sendStaticReply("Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have wonderful day!")
       ] as any )
       })

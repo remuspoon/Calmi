@@ -11,6 +11,7 @@ import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 
+const delay = (ms:number)=> new Promise(resolve => setTimeout(resolve, ms));
 
 
 export type ChatCompletionMessageParam = {
@@ -24,6 +25,7 @@ function Chat() {
   const user = useUser()
   const chatID = useParams().chatID as string
   const ref = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [endChat,setEndChat] = useState(false)
 
   const handlePrint = () => {
@@ -113,7 +115,11 @@ function Chat() {
 
       // Add the assistant message to the state
       
-      setMessages((prevmsg) => [...prevmsg, ...reply])
+      for (const r of reply){
+        setMessages((prevmsg) => [...prevmsg, r])
+        await delay(r.content.length*5)
+      }
+      console.log('done');
       await addMessageToFirestore(user.uid, chatID, reply)
     } catch (error) {
       console.log('Error sending message', error)
@@ -237,12 +243,17 @@ function Chat() {
         className='sticky bottom-0 left-0 right-0 flex items-center px-4 py-2 justify-between bg-purple-500 bg-opacity-5 backdrop-blur-md -mx-4 print:hidden'
         onSubmit={handleSubmit}
       >
-        <input
-          type='text'
+        <textarea
+          // type='text'
+          ref={inputRef}
           placeholder='Type here'
           className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0'
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            if(!inputRef?.current) return
+            inputRef.current.style.height = Math.min((inputRef?.current?.scrollHeight),100) + "px";
+          }}
         />
         <button className={`btn btn-primary ml-2 ${endChat && 'btn-disabled'}`} disabled={endChat}>Send</button>
         <button
