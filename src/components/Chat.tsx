@@ -12,6 +12,7 @@ import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 
 
+
 export type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant'
   content: string
@@ -39,6 +40,8 @@ function Chat() {
     html2pdf().set(opt).from(ref.current).save()
   }
 
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollToBottom = ()=> messagesEndRef?.current?.scrollIntoView({behavior:'smooth'})
   // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
@@ -81,6 +84,8 @@ function Chat() {
     if (!messages?.length) {
       initializeChat()
     }
+
+    scrollToBottom()
   }, [chatID, messages, user])
 
   if (user === 'loading' || !user || !chatID) return null
@@ -118,8 +123,8 @@ function Chat() {
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    if (isLoadingAnswer) return
     e.preventDefault()
+    if (!message || isLoadingAnswer) return
     setMessage('')
     await addMessage(message)
   }
@@ -189,6 +194,43 @@ function Chat() {
             )
           }
         })}
+        {isLoadingAnswer && <div className='chat chat-start break-inside-avoid'>
+                <div className='chat-image avatar'>
+                  <div className='w-10 rounded-full bg-slate-700 flex'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='24'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='mt-2 ml-2 text-green-500'
+                    >
+                      <path d='M12 8V4H8' />
+                      <rect width='16' height='12' x='4' y='8' rx='2' />
+                      <path d='M2 14h2' />
+                      <path d='M20 14h2' />
+                      <path d='M15 13v2' />
+                      <path d='M9 13v2' />
+                    </svg>
+                  </div>
+                </div>
+                <div className='chat-header'>
+                  CBT Bot
+                  {/* <time className='text-xs opacity-50'>12:45</time> */}
+                </div>
+                
+                <div className='chat-bubble flex gap-2'>
+                  <div className="bg-slate-600 p-2 delay-75  w-px h-px rounded-full animate-bounce"></div>
+                  <div className="bg-slate-600 p-2 delay-300 w-px h-px rounded-full animate-bounce"></div>
+                  <div className="bg-slate-600 p-2 delay-700  w-px h-px rounded-full animate-bounce"></div>
+                </div>
+                {/* <div className='chat-footer opacity-50'>Delivered</div> */}
+              </div>}
+        <div ref={messagesEndRef}></div>
       </div>
 
       <form
