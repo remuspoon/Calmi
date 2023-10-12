@@ -109,7 +109,7 @@ function Chat() {
       if (!reply) return
 
       // end of the chat
-      if(reply[0].content.toLowerCase().includes(TERMINATING_MESSAGE.toLowerCase())){
+      if(reply[0].content.toLowerCase()==(TERMINATING_MESSAGE.toLowerCase())){
         setEndChat(true)
       }
 
@@ -160,7 +160,7 @@ function Chat() {
                   {user.displayName}
                   {/* <time className='text-xs opacity-50'>12:46</time> */}
                 </div>
-                <div className='chat-bubble'>{msg.content}</div>
+                <div className='chat-bubble bg-blue-500 text-white'>{msg.content}</div>
                 {/* <div className='chat-footer opacity-50'>Seen at 12:46</div> */}
               </div>
             )
