@@ -117,7 +117,7 @@ function Chat() {
       if (!reply) return
 
       // end of the chat
-      if (reply[0].content.toLowerCase() == TERMINATING_MESSAGE.toLowerCase()) {
+      if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
         setEndChat(true)
       }
 
