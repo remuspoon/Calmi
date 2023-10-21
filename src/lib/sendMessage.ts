@@ -5,12 +5,8 @@ import {
 } from '@/services/openai/chat'
 
 export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
-  messages = messages
-    .filter((m) => m?.role)
-    .map((m) => ({
-      role: m.role,
-      content: m.content
-    }))
+  messages = messages.filter((m) => m?.role)
+
   try {
     const response = await fetch('/chat/api', {
       method: 'POST',

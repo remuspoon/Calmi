@@ -37,9 +37,9 @@ const RESPONSES_v1: Record<
 }
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
-  const currentMessage = messages
-    .filter((m) => m.role === 'user')
-    .findLastIndex((message) => message.role === 'user')
+  const currentMessage = messages.findLastIndex(
+    (message) => message.role === 'user'
+  )
 
   let currentToken = messages[currentMessage].token
   const currentSubtoken = messages[currentMessage].subtoken || 0

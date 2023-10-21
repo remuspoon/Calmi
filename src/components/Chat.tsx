@@ -51,9 +51,7 @@ function Chat() {
       const isForBot = lastMessage?.role === 'user'
 
       if (isForBot) {
-        console.log('is for bot')
         const reply = await getbotReply(m)
-        console.log('init', reply)
         if (!reply) return
 
         // Add the assistant message to the state
@@ -102,8 +100,8 @@ function Chat() {
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
-      const token = messages[messages.length - 1]?.token || 'START'
-      const subToken = messages[messages.length - 1]?.subtoken || 0
+      const token = messages[messages.length - 1]?.token ?? 'START'
+      const subToken = messages[messages.length - 1]?.subtoken ?? 0
       const newMessage: ChatCompletionMessageParam = {
         role: 'user',
         content,
@@ -116,7 +114,6 @@ function Chat() {
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
       let reply = await getbotReply([...messages, newMessage])
-      console.log('reply', reply)
       if (!reply) return
 
       // end of the chat
@@ -130,10 +127,8 @@ function Chat() {
         setMessages((prevmsg) => [...prevmsg, r])
         await delay(r.content.length * 5)
       }
-      console.log('done')
       await addMessageToFirestore(user.uid, chatID, reply)
     } catch (error) {
-      console.log('Error sending message', error)
     } finally {
       setIsLoadingAnswer(false)
     }
@@ -151,7 +146,7 @@ function Chat() {
       <div className='grow w-full print:grow-0' ref={ref}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
-          if (msg.role === 'system') {
+          if (msg.role === 'system' || msg.content === TERMINATING_MESSAGE) {
             return null
           }
           if (isUser) {
