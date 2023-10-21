@@ -3,11 +3,11 @@ import OpenAI from 'openai'
 const openAi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
-export const chatCompletions = (
+export const chatCompletions = async (
   messages: ChatCompletionMessageParam[],
   systemMessage?: string
-) =>
-  openAi.chat.completions.create({
+) => {
+  const response = await openAi.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: systemMessage
       ? [...messages, { role: 'system', content: systemMessage }]
@@ -15,4 +15,8 @@ export const chatCompletions = (
     max_tokens: 250,
     temperature: 0.7
   })
+  return response.choices[0].message.content
+}
+
+export type ChatCompletionsResponse = ReturnType<typeof chatCompletions>
 export default openAi

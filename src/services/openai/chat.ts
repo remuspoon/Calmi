@@ -1,5 +1,5 @@
 import { ChatCompletionMessageParam } from '@/components/Chat'
-import { chatCompletions } from '.'
+import { ChatCompletionsResponse, chatCompletions } from '.'
 import { isSuicidal } from './helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 
@@ -62,9 +62,7 @@ import { TERMINATING_MESSAGE } from '@/lib/constants'
 //   resolve({choices:[{message:{content: TERMINATING_MESSAGE}}]} as any )
 // }),
 
-const sendStaticReply = (content: string) => {
-  return { choices: [{ message: { content: content } }] }
-}
+const sendStaticReply = (content: string) => content
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
@@ -76,13 +74,11 @@ const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   }
   let response = await RESPONSES[currentMessage](messages)
 
-  // return (response as any).choices[0].message.content
-
   if (!Array.isArray(response)) {
     response = [response]
   }
 
-  return (response as any).map((res: any) => res.choices[0].message.content)
+  return response
 }
 
 //////////////////// BUILD RAPPORT PHASE
@@ -275,5 +271,69 @@ const RESPONSES = [
       ] as any)
     })
 ]
+
+type TOKENS = 'introduction' | 'END' | 'report-building'
+type RESPONSE_TYPE = {
+  next: (messages: ChatCompletionMessageParam[] | string) =>
+    | {
+        token: TOKENS
+        subtoken?: number
+        with?: string | string[]
+      }
+    | Promise<{ token: TOKENS; subtoken?: number; with?: string | string[] }>
+  response: (
+    messages: ChatCompletionMessageParam[]
+  ) => ChatCompletionsResponse | ChatCompletionsResponse[]
+}
+
+const RESPONSES_v1: Record<
+  Exclude<TOKENS, 'END'>,
+  RESPONSE_TYPE | RESPONSE_TYPE[]
+> = {
+  introduction: {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        'Ask the user to clarify on either the situation that is troubling them or their feelings.'
+      ),
+    next: async (messages) => {
+      const suicidal = await isSuicidal(
+        (messages as Array<ChatCompletionMessageParam>).findLast(
+          (m) => m.role === 'user'
+        )?.content || ''
+      )
+      if (suicidal) {
+        const reply = sendStaticReply(
+          "I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
+        )
+        return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
+      } else {
+        return { token: 'report-building' }
+      }
+    }
+  },
+  'report-building': {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        'Ask the user to clarify on either the situation that is troubling them or their feelings.'
+      ),
+    next: async (messages) => {
+      const suicidal = await isSuicidal(
+        (messages as Array<ChatCompletionMessageParam>).findLast(
+          (m) => m.role === 'user'
+        )?.content || ''
+      )
+      if (suicidal) {
+        const reply = sendStaticReply(
+          "I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
+        )
+        return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
+      } else {
+        return { token: 'report-building' }
+      }
+    }
+  }
+}
 
 export default getGptResponse
