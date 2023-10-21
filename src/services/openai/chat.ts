@@ -62,31 +62,37 @@ import { TERMINATING_MESSAGE } from '@/lib/constants'
 //   resolve({choices:[{message:{content: TERMINATING_MESSAGE}}]} as any )
 // }),
 
-const sendStaticReply = (content:string)=> {return {choices:[{message:{content:content}}]}}
+const sendStaticReply = (content: string) => {
+  return { choices: [{ message: { content: content } }] }
+}
 
 const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
   const currentMessage = messages
     .filter((m) => m.role === 'user')
     .findLastIndex((message) => message.role === 'user')
+
+  if (!RESPONSES[currentMessage]) {
+    return sendStaticReply(TERMINATING_MESSAGE)
+  }
   let response = await RESPONSES[currentMessage](messages)
 
   // return (response as any).choices[0].message.content
 
-  if(!Array.isArray(response)){
-    response= [response]
+  if (!Array.isArray(response)) {
+    response = [response]
   }
 
-  return (response as any).map((res:any)=>res.choices[0].message.content)
+  return (response as any).map((res: any) => res.choices[0].message.content)
 }
 
 //////////////////// BUILD RAPPORT PHASE
 
 const RESPONSES = [
   (messages: ChatCompletionMessageParam[]) =>
-  chatCompletions(
-    messages,
-    "Ask the user to clarify on either the situation that is troubling them or their feelings."
-  ),
+    chatCompletions(
+      messages,
+      'Ask the user to clarify on either the situation that is troubling them or their feelings.'
+    ),
 
   async (messages: ChatCompletionMessageParam[]) => {
     const suicidal = await isSuicidal(
@@ -100,94 +106,121 @@ const RESPONSES = [
     } else {
       return chatCompletions(
         messages,
-        "In 4 sentences or less, Empathize with the user's feelings and situation. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation.'")
+        "In 4 sentences or less, Empathize with the user's feelings and situation. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation.'"
+      )
     }
   },
-  
+
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
-      "In 3 sentences, encourage the user to elaborate on their situation or feelings with one open-ended question. Do not repeat questions asked before."
+      'In 3 sentences, encourage the user to elaborate on their situation or feelings with one open-ended question. Do not repeat questions asked before.'
     ),
-    (messages: ChatCompletionMessageParam[]) =>
+  (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
       "In 2 sentences, ask one question to gather more information on the user's situation. Do not repeat questions asked before."
     ),
 
-    async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
-
+  async (messages: ChatCompletionMessageParam[]) =>
+    new Promise(async (resolve, reject) => {
       const gptResponse2 = await chatCompletions(
         messages,
         "In second person perspective, summarise the user's situation and feelings by highlighting the key ideas and the problems they're facing. Finish by asking the user if they think your judgement is correct."
       )
-    
-      resolve([sendStaticReply("I think I understand your situation now."),gptResponse2] as any )
-       }),
 
-    (messages: ChatCompletionMessageParam[]) =>
+      resolve([
+        sendStaticReply('I think I understand your situation now.'),
+        gptResponse2
+      ] as any)
+    }),
+
+  (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
       "In less than 3 sentences, ask the user if they want to try a 'Cognitive Restructuring' exercise to help their feelings and situation."
     ),
 
-////////////// COGNITIVE RESTRUCTURING EXERCISE BEGIN
-    
+  ////////////// COGNITIVE RESTRUCTURING EXERCISE BEGIN
+
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
         "say this exactly: 'Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive.'"
       )
 
       resolve([
-        sendStaticReply("Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive."),
+        sendStaticReply(
+          "Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive."
+        ),
 
-        sendStaticReply("In CBT, Automatic thoughts are those quick, almost reflex-like thoughts that come to us without us really trying. They're like knee-jerk reactions, but in our minds. These thoughts aren't always true or helpful. Sometimes they're way off base or just too negative."),
+        sendStaticReply(
+          "In CBT, Automatic thoughts are those quick, almost reflex-like thoughts that come to us without us really trying. They're like knee-jerk reactions, but in our minds. These thoughts aren't always true or helpful. Sometimes they're way off base or just too negative."
+        ),
 
-        sendStaticReply("For example, imagine you're walking down the street, and you see someone you know. You wave at them, but they don't wave back. Instantly, a thought pops into your head: 'Did I do something wrong? Why are they mad at me?' That immediate thought? That's what we call an 'automatic thought'."),
-      
-        sendStaticReply("We want to try catch these sneaky thoughts, question them (like, 'Maybe that person didn't see me?'), and come up with better, more balanced thoughts. This way, instead of feeling hurt or worried, we might just think, 'Maybe they were distracted. I'll check in with them later.'"),
-      
-        sendStaticReply("Understood? Can we move on?")
-      ] as any )
-      }),
-////
-// Create 'Understanding' loop in here
-////
+        sendStaticReply(
+          "For example, imagine you're walking down the street, and you see someone you know. You wave at them, but they don't wave back. Instantly, a thought pops into your head: 'Did I do something wrong? Why are they mad at me?' That immediate thought? That's what we call an 'automatic thought'."
+        ),
+
+        sendStaticReply(
+          "We want to try catch these sneaky thoughts, question them (like, 'Maybe that person didn't see me?'), and come up with better, more balanced thoughts. This way, instead of feeling hurt or worried, we might just think, 'Maybe they were distracted. I'll check in with them later.'"
+        ),
+
+        sendStaticReply('Understood? Can we move on?')
+      ] as any)
+    }),
+  ////
+  // Create 'Understanding' loop in here
+  ////
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
-        "Fill in this statement:[Tell me, what are some automatic thoughts when you experienced {user situation}?"
+        'Fill in this statement:[Tell me, what are some automatic thoughts when you experienced {user situation}?'
       )
       resolve([
-        sendStaticReply("Great! Let's begin! Remember, don't rush this exercise and take your time. The more you think, the better the outcome this exercise will be."),
-        gptResponse, sendStaticReply("I want you to list out as many reasons why this might make you feel upset.")] as any )
-      }),
+        sendStaticReply(
+          "Great! Let's begin! Remember, don't rush this exercise and take your time. The more you think, the better the outcome this exercise will be."
+        ),
+        gptResponse,
+        sendStaticReply(
+          'I want you to list out as many reasons why this might make you feel upset.'
+        )
+      ] as any)
+    }),
 
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
         "In 2 sentences, empathize with the user's automatic thoughts and situation."
       )
       resolve([
-        gptResponse, sendStaticReply("In an ideal world, how would you want the situation to be?")] as any )
-      }),
+        gptResponse,
+        sendStaticReply(
+          'In an ideal world, how would you want the situation to be?'
+        )
+      ] as any)
+    }),
 
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
         "In 5 sentences or less, suggest one cognitive distortion that applies to the user based on their automatic thoughts. Next, explain what the cognitive distortion is. State that this cognitive distortion might be preventing user's ideal situation from happening. Then, explain how the user is showing this cognitive distortion. Finish by asking the user if they think your judgement is correct"
       )
       resolve([
-        sendStaticReply("I think I've identified a cognitive distortion in your automatic thoughts."), sendStaticReply("A cognitive distortion is a biased or irrational way of thinking that can lead to inaccurate perceptions, false beliefs, or negative emotions. These distortions often reinforce negative thought patterns."),
-        gptResponse] as any )
-      }),
-      
+        sendStaticReply(
+          "I think I've identified a cognitive distortion in your automatic thoughts."
+        ),
+        sendStaticReply(
+          'A cognitive distortion is a biased or irrational way of thinking that can lead to inaccurate perceptions, false beliefs, or negative emotions. These distortions often reinforce negative thought patterns.'
+        ),
+        gptResponse
+      ] as any)
+    }),
+
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
@@ -197,38 +230,50 @@ const RESPONSES = [
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
-      "Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion."
+      'Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion.'
     ),
-    
 
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
         "Fill in this statement: [As we can see, your thought that {insert user's automatic thought} is distorted.]"
       )
       resolve([
-        gptResponse, 
-        sendStaticReply("Based on your answers above, I want you to create a new thought or an alternative response to your situation that allows you to move forward and achieve your ideal outcome."), 
-        sendStaticReply("For example, an alternate response to a thought such as 'I cannot commit to a goal I set.' Can be something like: "),
-        sendStaticReply("'Just because I've struggled with some goals in the past doesn't mean I can't commit or succeed in the future. Everyone has setbacks. I can learn from my past experiences, adjust my approach, and keep trying.'"),
-        sendStaticReply("Your new response should recognize past difficulties but also emphasizes growth, learning, and the potential for future success. Now you try!")] as any )
-      }),
+        gptResponse,
+        sendStaticReply(
+          'Based on your answers above, I want you to create a new thought or an alternative response to your situation that allows you to move forward and achieve your ideal outcome.'
+        ),
+        sendStaticReply(
+          "For example, an alternate response to a thought such as 'I cannot commit to a goal I set.' Can be something like: "
+        ),
+        sendStaticReply(
+          "'Just because I've struggled with some goals in the past doesn't mean I can't commit or succeed in the future. Everyone has setbacks. I can learn from my past experiences, adjust my approach, and keep trying.'"
+        ),
+        sendStaticReply(
+          'Your new response should recognize past difficulties but also emphasizes growth, learning, and the potential for future success. Now you try!'
+        )
+      ] as any)
+    }),
 
   async (messages: ChatCompletionMessageParam[]) =>
-    new Promise(async (resolve,  reject)=>{
+    new Promise(async (resolve, reject) => {
       const gptResponse = await chatCompletions(
         messages,
         "Fill in:[Well done {username}! When we started out you were feeling {insert user feeling} because of your thought: {insert user's automatic thought}.You realised that it was not helping and replaced it with a new thought: {insert user's alternate response}."
       )
       resolve([
         gptResponse,
-        
-        sendStaticReply("You challenge your thought based on a clearer perspective, and craft a balanced, realistic alternative response. Now, whenever the negative thought arises, try to replace it with this new thought. Over time, this practice will not only shift your thinking patterns but also positively influence your emotions and actions, leading to healthier responses to situations."),
 
-        sendStaticReply("Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have wonderful day!")
-      ] as any )
-      })
+        sendStaticReply(
+          'You challenge your thought based on a clearer perspective, and craft a balanced, realistic alternative response. Now, whenever the negative thought arises, try to replace it with this new thought. Over time, this practice will not only shift your thinking patterns but also positively influence your emotions and actions, leading to healthier responses to situations.'
+        ),
+
+        sendStaticReply(
+          'Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have wonderful day!'
+        )
+      ] as any)
+    })
 ]
 
 export default getGptResponse
