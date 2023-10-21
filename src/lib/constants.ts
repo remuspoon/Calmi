@@ -1,1 +1,1 @@
-export const TERMINATING_MESSAGE = "End"
+export const TERMINATING_MESSAGE = 'End1234fwdf'
