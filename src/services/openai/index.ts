@@ -1,5 +1,5 @@
-import { ChatCompletionMessageParam } from '@/components/Chat'
 import OpenAI from 'openai'
+import { ChatCompletionMessageParam } from './chat'
 const openAi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })

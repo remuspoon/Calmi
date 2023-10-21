@@ -1,4 +1,8 @@
-import { ChatCompletionMessageParam } from '@/components/Chat'
+import {
+  ChatCompletionMessageParam,
+  GPTResponseType,
+  TOKENS
+} from '@/services/openai/chat'
 
 export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
   messages = messages
@@ -16,18 +20,23 @@ export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
       body: JSON.stringify({ messages })
     })
 
-    let reply = await response.json()
-    reply = reply.reply
-    // return {
-    //   role: 'assistant',
-    //   content: reply.reply
-    // } as ChatCompletionMessageParam
+    const reply = (await response.json()) as GPTResponseType
 
-    reply = reply.map((re:any)=>({role: 'assistant',
-      content: re}  as ChatCompletionMessageParam))
+    let res, currentToken: Exclude<TOKENS, 'START'>, currentSubToken: number
+    if (!Array.isArray(reply)) {
+      res = reply.response
+      currentToken = reply.currentToken
+      currentSubToken = reply.currentSubToken
+    } else {
+      res = reply
+    }
 
-    console.log(reply)
-    return reply
+    return res.map((r) => ({
+      role: 'assistant' as 'system' | 'user' | 'assistant',
+      content: r,
+      currentToken: currentToken,
+      currentSubToken: currentSubToken
+    }))
   } catch (error) {
     console.log(error)
   }

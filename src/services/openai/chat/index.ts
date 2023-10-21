@@ -1,7 +1,108 @@
-import { ChatCompletionMessageParam } from '@/components/Chat'
-import { ChatCompletionsResponse, chatCompletions } from '.'
-import { isSuicidal } from './helper'
+import { chatCompletions } from '../'
+import { isSuicidal } from '../helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
+import INTRODUCTION from './stages/introduction'
+import REPORT_BUILDING from './stages/reportBuilding'
+
+export type ChatCompletionMessageParam = {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+  token?: Exclude<TOKENS, 'END'>
+  subtoken?: number
+}
+export type TOKENS = 'introduction' | 'END' | 'START' | 'report-building'
+export type RESPONSE_TYPE = {
+  next?: (messages: ChatCompletionMessageParam[] | string) =>
+    | {
+        token: Exclude<TOKENS, 'START'>
+        subtoken?: number
+        with?: string | string[]
+      }
+    | Promise<{
+        token: Exclude<TOKENS, 'START'>
+        subtoken?: number
+        with?: string | string[]
+      }>
+  response: (
+    messages: ChatCompletionMessageParam[]
+  ) => Promise<string | null | string[]>
+}
+
+const RESPONSES_v1: Record<
+  Exclude<TOKENS, 'END' | 'START'>,
+  RESPONSE_TYPE | RESPONSE_TYPE[]
+> = {
+  introduction: INTRODUCTION,
+  'report-building': REPORT_BUILDING
+}
+
+const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
+  const currentMessage = messages
+    .filter((m) => m.role === 'user')
+    .findLastIndex((message) => message.role === 'user')
+
+  let currentToken = messages[currentMessage].token
+  const currentSubtoken = messages[currentMessage].subtoken || 0
+  if (!currentToken) {
+    console.log('no token')
+    return [TERMINATING_MESSAGE]
+  }
+
+  if (currentToken === 'START') {
+    currentToken = 'introduction'
+  }
+
+  let currentStage = RESPONSES_v1[currentToken]
+
+  if (!currentStage) {
+    console.log('no stage')
+    return [TERMINATING_MESSAGE]
+  }
+
+  if (!Array.isArray(currentStage)) {
+    currentStage = [currentStage]
+  }
+
+  const next = currentStage[currentSubtoken].next
+
+  let nextToken, nextsubtoken, endWith
+
+  if (next) {
+    const nextResponse = await next(messages)
+    nextToken = nextResponse.token
+    nextsubtoken = nextResponse.subtoken || 0
+    endWith = nextResponse.with
+  } else {
+    nextToken = currentToken
+    nextsubtoken = currentSubtoken + 1
+  }
+
+  if (nextToken === 'END') {
+    if (endWith) {
+      console.log('end with', endWith)
+      return Array.isArray(endWith) ? endWith : [endWith]
+    } else {
+      console.log('end')
+      return [TERMINATING_MESSAGE]
+    }
+  }
+
+  let nextStage = RESPONSES_v1[nextToken]
+
+  if (!Array.isArray(nextStage)) {
+    nextStage = [nextStage]
+  }
+
+  let response = await nextStage[nextsubtoken].response(messages)
+
+  if (!Array.isArray(response)) {
+    response = [response!]
+  }
+
+  return { response, currentToken: nextToken, currentSubToken: nextsubtoken }
+}
+
+export type GPTResponseType = Awaited<ReturnType<typeof getGptResponse>>
 
 // Templates
 
@@ -64,22 +165,22 @@ import { TERMINATING_MESSAGE } from '@/lib/constants'
 
 const sendStaticReply = (content: string) => content
 
-const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
-  const currentMessage = messages
-    .filter((m) => m.role === 'user')
-    .findLastIndex((message) => message.role === 'user')
+// const getGptResponse = async (messages: ChatCompletionMessageParam[]) => {
+//   const currentMessage = messages
+//     .filter((m) => m.role === 'user')
+//     .findLastIndex((message) => message.role === 'user')
 
-  if (!RESPONSES[currentMessage]) {
-    return sendStaticReply(TERMINATING_MESSAGE)
-  }
-  let response = await RESPONSES[currentMessage](messages)
+//   if (!RESPONSES[currentMessage]) {
+//     return sendStaticReply(TERMINATING_MESSAGE)
+//   }
+//   let response = await RESPONSES[currentMessage](messages)
 
-  if (!Array.isArray(response)) {
-    response = [response]
-  }
+//   if (!Array.isArray(response)) {
+//     response = [response]
+//   }
 
-  return response
-}
+//   return response
+// }
 
 //////////////////// BUILD RAPPORT PHASE
 
@@ -271,69 +372,5 @@ const RESPONSES = [
       ] as any)
     })
 ]
-
-type TOKENS = 'introduction' | 'END' | 'report-building'
-type RESPONSE_TYPE = {
-  next: (messages: ChatCompletionMessageParam[] | string) =>
-    | {
-        token: TOKENS
-        subtoken?: number
-        with?: string | string[]
-      }
-    | Promise<{ token: TOKENS; subtoken?: number; with?: string | string[] }>
-  response: (
-    messages: ChatCompletionMessageParam[]
-  ) => ChatCompletionsResponse | ChatCompletionsResponse[]
-}
-
-const RESPONSES_v1: Record<
-  Exclude<TOKENS, 'END'>,
-  RESPONSE_TYPE | RESPONSE_TYPE[]
-> = {
-  introduction: {
-    response: (messages) =>
-      chatCompletions(
-        messages,
-        'Ask the user to clarify on either the situation that is troubling them or their feelings.'
-      ),
-    next: async (messages) => {
-      const suicidal = await isSuicidal(
-        (messages as Array<ChatCompletionMessageParam>).findLast(
-          (m) => m.role === 'user'
-        )?.content || ''
-      )
-      if (suicidal) {
-        const reply = sendStaticReply(
-          "I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
-        )
-        return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
-      } else {
-        return { token: 'report-building' }
-      }
-    }
-  },
-  'report-building': {
-    response: (messages) =>
-      chatCompletions(
-        messages,
-        'Ask the user to clarify on either the situation that is troubling them or their feelings.'
-      ),
-    next: async (messages) => {
-      const suicidal = await isSuicidal(
-        (messages as Array<ChatCompletionMessageParam>).findLast(
-          (m) => m.role === 'user'
-        )?.content || ''
-      )
-      if (suicidal) {
-        const reply = sendStaticReply(
-          "I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
-        )
-        return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
-      } else {
-        return { token: 'report-building' }
-      }
-    }
-  }
-}
 
 export default getGptResponse
