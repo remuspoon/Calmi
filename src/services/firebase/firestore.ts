@@ -68,7 +68,9 @@ function removeUndefinedAndNull(obj: any) {
 export const addMessageToFirestore = async (
   uid: string,
   chatID: string,
-  message: ChatCompletionMessageParam | ChatCompletionMessageParam[]
+  message:
+    | ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+    | ChatCompletionMessageParam<'user' | 'assistant' | 'system'>
 ) => {
   if (!Array.isArray(message)) {
     message = [message]
@@ -97,10 +99,10 @@ export const getMessagesFromFirestore = async (
 
   const querySnapshot = await getDocs(q)
 
-  const messages: ChatCompletionMessageParam[] = []
+  const messages: ChatCompletionMessageParam<'user'>[] = []
 
   querySnapshot.forEach((doc) => {
-    messages.push(doc.data() as ChatCompletionMessageParam)
+    messages.push(doc.data() as ChatCompletionMessageParam<'user'>)
   })
 
   return messages.reverse()

@@ -4,7 +4,9 @@ import {
   TOKENS
 } from '@/services/openai/chat'
 
-export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
+export const getbotReply = async (
+  messages: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+) => {
   messages = messages.filter((m) => m?.role)
 
   try {
@@ -18,21 +20,24 @@ export const getbotReply = async (messages: ChatCompletionMessageParam[]) => {
 
     const reply = (await response.json()) as GPTResponseType
 
-    let res, currentToken: Exclude<TOKENS, 'START'>, currentSubToken: number
+    let res, token: Exclude<TOKENS, 'START'>, subtoken: number
     if (!Array.isArray(reply)) {
       res = reply.response
-      currentToken = reply.currentToken
-      currentSubToken = reply.currentSubToken
+      token = reply.token
+      subtoken = reply.subtoken
     } else {
       res = reply
     }
 
-    return res.map((r) => ({
-      role: 'assistant' as 'system' | 'user' | 'assistant',
-      content: r,
-      currentToken: currentToken,
-      currentSubToken: currentSubToken
-    }))
+    return res.map(
+      (r) =>
+        ({
+          role: 'assistant',
+          content: r,
+          token: token,
+          subtoken: subtoken
+        } as ChatCompletionMessageParam<'assistant'>)
+    )
   } catch (error) {
     console.log(error)
   }

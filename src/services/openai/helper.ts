@@ -12,5 +12,6 @@ export const isSuicidal = async (text: string) => {
   const response = result.choices[0].text
   return response.toLowerCase().includes('yes')
 }
-
+export const staticResponse = (content: string | string[]) => () =>
+  Promise.resolve(content)
 export const provideEmpathy = async (text: string) => {}

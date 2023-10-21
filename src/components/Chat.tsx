@@ -10,13 +10,15 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
-import { ChatCompletionMessageParam, TOKENS } from '@/services/openai/chat'
+import { ChatCompletionMessageParam } from '@/services/openai/chat'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 function Chat() {
   const [message, setMessage] = useState('')
-  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([])
+  const [messages, setMessages] = useState<
+    ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+  >([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
@@ -68,12 +70,12 @@ function Chat() {
       }
 
       if (m.length) return
-      const systemMessage: ChatCompletionMessageParam = {
+      const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
         content:
           "You are a therapeutic chat bot called 'Li' with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
       }
-      const welcomeMessage: ChatCompletionMessageParam = {
+      const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
         content: `Hey ${user.displayName}! I'm Li, I am a chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
@@ -100,9 +102,12 @@ function Chat() {
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
+      const lastUserMessage = messages[messages.length - 1]
+      console.log(lastUserMessage)
       const token = messages[messages.length - 1]?.token ?? 'START'
       const subToken = messages[messages.length - 1]?.subtoken ?? 0
-      const newMessage: ChatCompletionMessageParam = {
+      console.log(token, subToken)
+      const newMessage: ChatCompletionMessageParam<'user'> = {
         role: 'user',
         content,
         token,

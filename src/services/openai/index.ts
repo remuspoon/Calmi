@@ -4,7 +4,7 @@ const openAi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 export const chatCompletions = async (
-  messages: ChatCompletionMessageParam[],
+  messages: ChatCompletionMessageParam<'user'>[],
   systemMessage?: string
 ) => {
   const response = await openAi.chat.completions.create({

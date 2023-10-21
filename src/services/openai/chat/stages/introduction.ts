@@ -11,7 +11,7 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = {
     ),
   next: async (messages) => {
     const suicidal = await isSuicidal(
-      (messages as Array<ChatCompletionMessageParam>).findLast(
+      (messages as Array<ChatCompletionMessageParam<'user'>>).findLast(
         (m) => m.role === 'user'
       )?.content || ''
     )
