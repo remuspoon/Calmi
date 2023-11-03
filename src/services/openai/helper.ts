@@ -12,6 +12,20 @@ export const isSuicidal = async (text: string) => {
   const response = result.choices[0].text
   return response.toLowerCase().includes('yes')
 }
+
+export const userAffirmed = async (text: string) => {
+  const prompt = `Is the user response affirmative: ${text} \nAnswer either 'yes' or 'no'`
+
+  const result = await openai.completions.create({
+    model: 'text-davinci-002',
+    prompt,
+    temperature: 0
+  })
+
+  const response = result.choices[0].text
+  return response.toLowerCase().includes('yes')
+}
+
 export const staticResponse = (content: string | string[]) => () =>
   Promise.resolve(content)
 export const provideEmpathy = async (text: string) => {}
