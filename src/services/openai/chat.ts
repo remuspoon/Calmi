@@ -85,30 +85,15 @@ const RESPONSES = [
   (messages: ChatCompletionMessageParam[]) =>
   chatCompletions(
     messages,
-    "Ask the user to clarify on either the situation that is troubling them or their feelings."
+    "Empathize with the user's feelings and situation. Then ask the user to clarify on the situation that is troubling them."
   ),
 
-  async (messages: ChatCompletionMessageParam[]) => {
-    const suicidal = await isSuicidal(
-      messages.findLast((m) => m.role === 'user')?.content || ''
-    )
-    if (suicidal) {
-      return chatCompletions(
-        messages,
-        "just say I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
-      )
-    } else {
-      return chatCompletions(
-        messages,
-        "In 4 sentences or less, Empathize with the user's feelings and situation. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation.'")
-    }
-  },
-  
   (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
-      "In 3 sentences, encourage the user to elaborate on their situation or feelings with one open-ended question. Do not repeat questions asked before."
+      "In 4 sentences or less, Empathize with the user's feelings and situation without repeating it word for word. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
     ),
+
     (messages: ChatCompletionMessageParam[]) =>
     chatCompletions(
       messages,
@@ -144,7 +129,7 @@ const RESPONSES = [
       resolve([
         sendStaticReply("Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive."),
 
-        sendStaticReply("In CBT, Automatic thoughts are those quick, almost reflex-like thoughts that come to us without us really trying. They're like knee-jerk reactions, but in our minds. These thoughts aren't always true or helpful. Sometimes they're way off base or just too negative."),
+        sendStaticReply("In cognitive behavourial therapy, Automatic thoughts are those quick, almost reflex-like thoughts that come to us without us really trying. They're like knee-jerk reactions, but in our minds. These thoughts aren't always true or helpful. Sometimes they're way off base or just too negative."),
 
         sendStaticReply("For example, imagine you're walking down the street, and you see someone you know. You wave at them, but they don't wave back. Instantly, a thought pops into your head: 'Did I do something wrong? Why are they mad at me?' That immediate thought? That's what we call an 'automatic thought'."),
       
@@ -200,6 +185,10 @@ const RESPONSES = [
       "Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion."
     ),
     
+  (messages: ChatCompletionMessageParam[]) =>
+    chatCompletions(
+      messages,
+      "Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion."),
 
   async (messages: ChatCompletionMessageParam[]) =>
     new Promise(async (resolve,  reject)=>{
@@ -219,7 +208,7 @@ const RESPONSES = [
     new Promise(async (resolve,  reject)=>{
       const gptResponse = await chatCompletions(
         messages,
-        "Fill in:[Well done {username}! When we started out you were feeling {insert user feeling} because of your thought: {insert user's automatic thought}.You realised that it was not helping and replaced it with a new thought: {insert user's alternate response}."
+        "Fill in:[When we started out you were feeling {insert user feeling} because of your thought: {insert user's automatic thought}. You realised that it was not helping and replaced it with a new thought: {insert user's alternate response}."
       )
       resolve([
         gptResponse,
