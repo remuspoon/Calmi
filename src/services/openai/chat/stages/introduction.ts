@@ -21,7 +21,7 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = {
 
       return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
     } else {
-      return { token: 'report-building' }
+      return { token: 'rapport-building' }
     }
   }
 }
