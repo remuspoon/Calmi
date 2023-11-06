@@ -2,7 +2,9 @@ import { chatCompletions } from '../'
 import { isSuicidal } from '../helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import INTRODUCTION from './stages/introduction'
-import RAPPORT_BUILDING from './stages/rapportBuilding'
+import REPORT_BUILDING from './stages/reportBuilding'
+import EXERCISE from './stages/exercise'
+import EXPLANATION from './stages/explanation'
 
 export type ChatCompletionMessageParam<
   T extends 'user' | 'assistant' | 'system'
@@ -12,7 +14,13 @@ export type ChatCompletionMessageParam<
   token?: T extends 'user' ? Exclude<TOKENS, 'END'> : Exclude<TOKENS, 'END'>
   subtoken?: number
 }
-export type TOKENS = 'introduction' | 'END' | 'START' | 'rapport-building'
+export type TOKENS =
+  | 'introduction'
+  | 'END'
+  | 'START'
+  | 'report-building'
+  | 'exercise'
+  | 'explanation'
 export type RESPONSE_TYPE = {
   next?: (messages: ChatCompletionMessageParam<'user'>[] | string) =>
     | {
@@ -35,7 +43,9 @@ const RESPONSES_v1: Record<
   RESPONSE_TYPE | RESPONSE_TYPE[]
 > = {
   introduction: INTRODUCTION,
-  'rapport-building': RAPPORT_BUILDING
+  'report-building': REPORT_BUILDING,
+  exercise: EXERCISE,
+  explanation: EXPLANATION
 }
 
 const getGptResponse = async (

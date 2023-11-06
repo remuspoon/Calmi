@@ -7,6 +7,13 @@ export const chatCompletions = async (
   messages: ChatCompletionMessageParam<'user'>[],
   systemMessage?: string
 ) => {
+  messages = messages.map(
+    (m) =>
+      ({
+        content: m.content,
+        role: m.role
+      } as any)
+  )
   const response = await openAi.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: systemMessage
