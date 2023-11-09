@@ -7,7 +7,6 @@ import {
   getDoc,
   getDocs,
   getFirestore,
-  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -15,7 +14,7 @@ import {
   where
 } from 'firebase/firestore'
 import app from '.'
-import { ChatCompletionMessageParam } from '@/components/Chat'
+import { ChatCompletionMessageParam } from '../openai/chat'
 
 const db = getFirestore(app)
 
@@ -55,19 +54,31 @@ export const createChat = async (uid: string) => {
   return chatDocRef
 }
 
+function removeUndefinedAndNull(obj: any) {
+  const cleanedObject: any = {}
+  for (const key in obj) {
+    if (obj[key] !== undefined && obj[key] !== null) {
+      cleanedObject[key] = obj[key]
+    }
+  }
+  return cleanedObject
+}
+
 // add message to messages collection at users/{uid}/chats/{chatID}/messages
 export const addMessageToFirestore = async (
   uid: string,
   chatID: string,
-  message: ChatCompletionMessageParam | ChatCompletionMessageParam[]
+  message:
+    | ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+    | ChatCompletionMessageParam<'user' | 'assistant' | 'system'>
 ) => {
   if (!Array.isArray(message)) {
     message = [message]
   }
   await Promise.all(
-    message.map(async (m) => {
+    message.map(async (m: any) => {
       await addDoc(collection(db, messagesPath(uid, chatID)), {
-        ...m,
+        ...removeUndefinedAndNull(m),
         timeStamp: serverTimestamp()
       })
     })
@@ -88,10 +99,10 @@ export const getMessagesFromFirestore = async (
 
   const querySnapshot = await getDocs(q)
 
-  const messages: ChatCompletionMessageParam[] = []
+  const messages: ChatCompletionMessageParam<'user'>[] = []
 
   querySnapshot.forEach((doc) => {
-    messages.push(doc.data() as ChatCompletionMessageParam)
+    messages.push(doc.data() as ChatCompletionMessageParam<'user'>)
   })
 
   return messages.reverse()

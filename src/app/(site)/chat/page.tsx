@@ -21,10 +21,8 @@ function ChatDashboard() {
     const f = async () => {
       try {
         const chats = await getChats(uid)
-        console.log(chats)
         setChats(chats)
       } catch (error) {
-        console.log(error)
         router.replace('/')
       }
     }
@@ -37,9 +35,7 @@ function ChatDashboard() {
     try {
       await deleteChatFromFirestore(uid, id)
       setChats((prev) => prev.filter((c) => c.id !== id))
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (error) {}
   }
   return (
     <div className='flex flex-col gap-2'>

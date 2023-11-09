@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   try {
     return NextResponse.json({ reply: '' })
   } catch (error: any) {
-    console.log(error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

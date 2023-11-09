@@ -36,7 +36,6 @@ function Survey({ Questions }: Params) {
   const handleChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target
     // input type checkbox
-    console.log(e.target.type)
     if (e.target.type === 'checkbox') {
       if (e.target.checked) {
         setForm((prev) => ({

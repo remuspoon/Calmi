@@ -10,23 +10,21 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
+import { ChatCompletionMessageParam } from '@/services/openai/chat'
 
-const delay = (ms:number)=> new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-
-export type ChatCompletionMessageParam = {
-  role: 'system' | 'user' | 'assistant'
-  content: string
-}
 function Chat() {
   const [message, setMessage] = useState('')
-  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([])
+  const [messages, setMessages] = useState<
+    ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+  >([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
   const ref = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const [endChat,setEndChat] = useState(false)
+  const [endChat, setEndChat] = useState(false)
 
   const handlePrint = () => {
     if (!ref.current) return
@@ -43,35 +41,43 @@ function Chat() {
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const scrollToBottom = ()=> messagesEndRef?.current?.scrollIntoView({behavior:'smooth'})
+  const scrollToBottom = () =>
+    messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' })
   // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
       const m = await getMessagesFromFirestore(user.uid, chatID)
       setMessages(m)
-      const isForBot = m[m.length - 1]?.role === 'user'
+      const lastMessage = m[m.length - 1]
+      const isForBot = lastMessage?.role === 'user'
 
       if (isForBot) {
         const reply = await getbotReply(m)
-
         if (!reply) return
 
         // Add the assistant message to the state
 
-        setMessages((prevmsg) => [...prevmsg, reply])
+        setMessages((prevmsg) => [...prevmsg, ...reply])
         await addMessageToFirestore(user.uid, chatID, reply)
       }
 
+      if (
+        lastMessage?.content.toLowerCase() == TERMINATING_MESSAGE.toLowerCase()
+      ) {
+        setEndChat(true)
+        return
+      }
+
       if (m.length) return
-      const systemMessage: ChatCompletionMessageParam = {
+      const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
         content:
           "You are a therapeutic chat bot called 'Li' with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
       }
-      const welcomeMessage: ChatCompletionMessageParam = {
+      const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${user.displayName}! I'm Li, I am a chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ${user.displayName}! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 
@@ -88,16 +94,24 @@ function Chat() {
     }
 
     scrollToBottom()
-  }, [chatID, messages, user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatID, user])
 
   if (user === 'loading' || !user || !chatID) return null
 
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
-      const newMessage: ChatCompletionMessageParam = {
+      const lastUserMessage = messages[messages.length - 1]
+      console.log(lastUserMessage)
+      const token = messages[messages.length - 1]?.token ?? 'START'
+      const subToken = messages[messages.length - 1]?.subtoken ?? 0
+      console.log(token, subToken)
+      const newMessage: ChatCompletionMessageParam<'user'> = {
         role: 'user',
-        content
+        content,
+        token,
+        subtoken: subToken
       }
 
       // Add the user message to the state so we can see it immediately
@@ -105,24 +119,21 @@ function Chat() {
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
       let reply = await getbotReply([...messages, newMessage])
-
       if (!reply) return
 
       // end of the chat
-      if(reply[0].content.toLowerCase()==(TERMINATING_MESSAGE.toLowerCase())){
+      if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
         setEndChat(true)
       }
 
       // Add the assistant message to the state
-      
-      for (const r of reply){
+
+      for (const r of reply) {
         setMessages((prevmsg) => [...prevmsg, r])
-        await delay(r.content.length*5)
+        await delay(r.content.length * 5)
       }
-      console.log('done');
       await addMessageToFirestore(user.uid, chatID, reply)
     } catch (error) {
-      console.log('Error sending message', error)
     } finally {
       setIsLoadingAnswer(false)
     }
@@ -140,7 +151,7 @@ function Chat() {
       <div className='grow w-full print:grow-0' ref={ref}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
-          if (msg.role === 'system') {
+          if (msg.role === 'system' || msg.content === TERMINATING_MESSAGE) {
             return null
           }
           if (isUser) {
@@ -160,7 +171,9 @@ function Chat() {
                   {user.displayName}
                   {/* <time className='text-xs opacity-50'>12:46</time> */}
                 </div>
-                <div className='chat-bubble bg-blue-500 text-white'>{msg.content}</div>
+                <div className='chat-bubble bg-blue-500 text-white'>
+                  {msg.content}
+                </div>
                 {/* <div className='chat-footer opacity-50'>Seen at 12:46</div> */}
               </div>
             )
@@ -200,42 +213,44 @@ function Chat() {
             )
           }
         })}
-        {isLoadingAnswer && <div className='chat chat-start break-inside-avoid'>
-                <div className='chat-image avatar'>
-                  <div className='w-10 rounded-full bg-slate-700 flex'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='24'
-                      height='24'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='mt-2 ml-2 text-green-500'
-                    >
-                      <path d='M12 8V4H8' />
-                      <rect width='16' height='12' x='4' y='8' rx='2' />
-                      <path d='M2 14h2' />
-                      <path d='M20 14h2' />
-                      <path d='M15 13v2' />
-                      <path d='M9 13v2' />
-                    </svg>
-                  </div>
-                </div>
-                <div className='chat-header'>
-                  CBT Bot
-                  {/* <time className='text-xs opacity-50'>12:45</time> */}
-                </div>
-                
-                <div className='chat-bubble flex gap-2'>
-                  <div className="bg-slate-600 p-2 delay-75  w-px h-px rounded-full animate-bounce"></div>
-                  <div className="bg-slate-600 p-2 delay-300 w-px h-px rounded-full animate-bounce"></div>
-                  <div className="bg-slate-600 p-2 delay-700  w-px h-px rounded-full animate-bounce"></div>
-                </div>
-                {/* <div className='chat-footer opacity-50'>Delivered</div> */}
-              </div>}
+        {isLoadingAnswer && (
+          <div className='chat chat-start break-inside-avoid'>
+            <div className='chat-image avatar'>
+              <div className='w-10 rounded-full bg-slate-700 flex'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='24'
+                  height='24'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  className='mt-2 ml-2 text-green-500'
+                >
+                  <path d='M12 8V4H8' />
+                  <rect width='16' height='12' x='4' y='8' rx='2' />
+                  <path d='M2 14h2' />
+                  <path d='M20 14h2' />
+                  <path d='M15 13v2' />
+                  <path d='M9 13v2' />
+                </svg>
+              </div>
+            </div>
+            <div className='chat-header'>
+              CBT Bot
+              {/* <time className='text-xs opacity-50'>12:45</time> */}
+            </div>
+
+            <div className='chat-bubble flex gap-2'>
+              <div className='bg-slate-600 p-2 delay-75  w-px h-px rounded-full animate-bounce'></div>
+              <div className='bg-slate-600 p-2 delay-300 w-px h-px rounded-full animate-bounce'></div>
+              <div className='bg-slate-600 p-2 delay-700  w-px h-px rounded-full animate-bounce'></div>
+            </div>
+            {/* <div className='chat-footer opacity-50'>Delivered</div> */}
+          </div>
+        )}
         <div ref={messagesEndRef}></div>
       </div>
 
@@ -250,12 +265,18 @@ function Chat() {
           className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0'
           value={message}
           onChange={(e) => {
-            setMessage(e.target.value);
-            if(!inputRef?.current) return
-            inputRef.current.style.height = Math.min((inputRef?.current?.scrollHeight),100) + "px";
+            setMessage(e.target.value)
+            if (!inputRef?.current) return
+            inputRef.current.style.height =
+              Math.min(inputRef?.current?.scrollHeight, 100) + 'px'
           }}
         />
-        <button className={`btn btn-primary ml-2 ${endChat && 'btn-disabled'}`} disabled={endChat}>Send</button>
+        <button
+          className={`btn btn-primary ml-2 ${endChat && 'btn-disabled'}`}
+          disabled={endChat}
+        >
+          Send
+        </button>
         <button
           className='btn btn-secondary ml-2 btn-outline btn-sm'
           onClick={handlePrint}
