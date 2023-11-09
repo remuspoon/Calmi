@@ -2,9 +2,14 @@ import { chatCompletions } from '../'
 import { isSuicidal } from '../helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import INTRODUCTION from './stages/introduction'
-import REPORT_BUILDING from './stages/reportBuilding'
-import EXERCISE from './stages/exercise'
-import EXPLANATION from './stages/explanation'
+import RAPPORT_BUILDING from './stages/rapportBuilding'
+import AT_DISTORTION from './stages/atDistortion'
+import AT_EXPLANATION from './stages/atExplanation'
+import FIND_NEED from './stages/findNeed'
+import CR_EXERCISE from './stages/crExercise'
+import IDENTIFY_DISTORTION from './stages/identifyDistortion'
+import EXPLAIN_LOOP from './stages/ExplainLoop'
+import CLARIFY_SITUATION from './stages/ClarifySituation'
 
 export type ChatCompletionMessageParam<
   T extends 'user' | 'assistant' | 'system'
@@ -18,9 +23,14 @@ export type TOKENS =
   | 'introduction'
   | 'END'
   | 'START'
-  | 'report-building'
-  | 'exercise'
-  | 'explanation'
+  | 'rapportBuilding'
+  | 'atDistortion'
+  | 'atExplanation'
+  | 'findNeed'
+  | 'crExercise'
+  | 'identifyDistortion'
+  | 'ExplainLoop'
+  | 'ClarifySituation'
 export type RESPONSE_TYPE = {
   next?: (messages: ChatCompletionMessageParam<'user'>[] | string) =>
     | {
@@ -43,9 +53,14 @@ const RESPONSES_v1: Record<
   RESPONSE_TYPE | RESPONSE_TYPE[]
 > = {
   introduction: INTRODUCTION,
-  'report-building': REPORT_BUILDING,
-  exercise: EXERCISE,
-  explanation: EXPLANATION
+  rapportBuilding: RAPPORT_BUILDING,
+  atDistortion: AT_DISTORTION,
+  atExplanation: AT_EXPLANATION,
+  findNeed: FIND_NEED,
+  crExercise: CR_EXERCISE,
+  identifyDistortion: IDENTIFY_DISTORTION,
+  ExplainLoop: EXPLAIN_LOOP,
+  ClarifySituation: CLARIFY_SITUATION
 }
 
 const getGptResponse = async (

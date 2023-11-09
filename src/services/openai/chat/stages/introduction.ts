@@ -8,8 +8,9 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Ask the user to clarify on either the situation that is troubling them or their feelings.'
+        "Empathize with the user's feelings and situation. Then ask the user to clarify on the situation that is troubling them."
       ),
+      
     next: async (messages) => {
       const suicidal = await isSuicidal(
         (messages as Array<ChatCompletionMessageParam<'user'>>).findLast(
@@ -22,7 +23,7 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
 
         return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
       } else {
-        return { token: 'report-building' }
+        return { token: 'rapportBuilding'}
       }
     }
   }
