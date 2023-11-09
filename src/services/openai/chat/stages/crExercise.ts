@@ -40,6 +40,8 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
 ])()
     return res
   },
+  next: async (messages) => {
+  return {token : "END"}},
 }
   ]
   
