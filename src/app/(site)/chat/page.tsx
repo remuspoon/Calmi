@@ -12,6 +12,7 @@ function ChatDashboard() {
   const uid = useSearchParams().get('uid')
   const router = useRouter()
   const [chats, setChats] = React.useState<any[]>([])
+  router.replace('/')
   useEffect(() => {
     if (!uid) {
       router.replace('/')
@@ -23,6 +24,7 @@ function ChatDashboard() {
         const chats = await getChats(uid)
         setChats(chats)
       } catch (error) {
+        console.log(error)
         router.replace('/')
       }
     }

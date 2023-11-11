@@ -19,11 +19,10 @@ import { ChatCompletionMessageParam } from '../openai/chat'
 const db = getFirestore(app)
 
 // path to collections
-const chatPath = (uid: string) => `users/${uid}/chats`
-const messagesPath = (uid: string, chatID: string) =>
-  `${chatPath(uid)}/${chatID}/messages`
-const surveyPath = (uid: string, chatID: string) =>
-  `${chatPath(uid)}/${chatID}/survey`
+const chatPath = `chats`
+const messagesPath = (chatID: string) => `${chatPath}/${chatID}/messages`
+// const surveyPath = (uid: string, chatID: string) =>
+//   `${chatPath(uid)}/${chatID}/survey`
 
 // get user data
 export const getUser = async (id: string) => {
@@ -36,7 +35,7 @@ export const getUser = async (id: string) => {
 
 // get All chats
 export const getChats = async (uid: string) => {
-  const q = query(collection(db, chatPath(uid)), orderBy('timeStamp', 'asc'))
+  const q = query(collection(db, chatPath), orderBy('timeStamp', 'asc'))
   const querySnapshot = await getDocs(q)
   const chats: any[] = []
   querySnapshot.forEach((doc) => {
@@ -48,7 +47,7 @@ export const getChats = async (uid: string) => {
 
 // create chat document at users/{uid}/chats/{chatID}
 export const createChat = async (uid: string) => {
-  const chatDocRef = await addDoc(collection(db, chatPath(uid)), {
+  const chatDocRef = await addDoc(collection(db, chatPath), {
     timeStamp: serverTimestamp()
   })
   return chatDocRef
@@ -77,7 +76,7 @@ export const addMessageToFirestore = async (
   }
   await Promise.all(
     message.map(async (m: any) => {
-      await addDoc(collection(db, messagesPath(uid, chatID)), {
+      await addDoc(collection(db, messagesPath(chatID)), {
         ...removeUndefinedAndNull(m),
         timeStamp: serverTimestamp()
       })
@@ -91,7 +90,7 @@ export const getMessagesFromFirestore = async (
   minTimestamp = new Date()
 ) => {
   const q = query(
-    collection(db, messagesPath(uid, chatID)),
+    collection(db, messagesPath(chatID)),
     where('timeStamp', '<=', minTimestamp),
     orderBy('timeStamp', 'desc')
     // limit(10)
@@ -108,27 +107,27 @@ export const getMessagesFromFirestore = async (
   return messages.reverse()
 }
 
-export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
-  const surveyDocRef = doc(db, surveyPath(uid, chatID))
-  const surveySnap = await getDoc(surveyDocRef)
-  if (surveySnap.exists()) {
-    return surveySnap.data()
-  }
-}
+// export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
+//   const surveyDocRef = doc(db, surveyPath(uid, chatID))
+//   const surveySnap = await getDoc(surveyDocRef)
+//   if (surveySnap.exists()) {
+//     return surveySnap.data()
+//   }
+// }
 
 export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
-  const chatDocRef = doc(db, chatPath(uid), chatID)
+  const chatDocRef = doc(db, chatPath, chatID)
   await deleteDoc(chatDocRef)
 }
 
-export const addSurveyToFirestore = async (
-  uid: string,
-  chatID: string,
-  survey: 'pre' | 'post',
-  data: any
-) => {
-  let docRef = doc(db, surveyPath(uid, chatID), survey)
-  await setDoc(docRef, data)
-}
+// export const addSurveyToFirestore = async (
+//   uid: string,
+//   chatID: string,
+//   survey: 'pre' | 'post',
+//   data: any
+// ) => {
+//   let docRef = doc(db, surveyPath(uid, chatID), survey)
+//   await setDoc(docRef, data)
+// }
 
 export default db

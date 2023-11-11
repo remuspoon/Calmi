@@ -7,6 +7,7 @@ import ChatButton from '@/components/ChatButton'
 // import MyChatButton from '@/components/MyChatButton'
 import NextTopLoader from 'nextjs-toploader'
 import { Toaster } from 'react-hot-toast'
+import CopyChatURL from '@/components/ShareChatURL'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -58,6 +59,7 @@ export default function RootLayout({
               >
                 about
               </Link>
+              <CopyChatURL />
               {/* <MyChatButton /> */}
               <ChatButton label='topNav' />
             </div>

@@ -1,6 +1,6 @@
 // import Steps from '@/components/Steps'
 // import Survey from '@/components/Survey'
-import { getSurvey } from '@/services/sanity/lib/queries'
+// import { getSurvey } from '@/services/sanity/lib/queries'
 import dynamic from 'next/dynamic'
 
 const Chat = dynamic(() => import('../../../../components/Chat'), {
