@@ -19,11 +19,11 @@ async function ChatPage({
 
   // if (!currentStep && !completed) currentStep = 0
 
-  const surveys = await getSurvey()
-  const prechatSurvey =
-    surveys.find((s) => s.title === 'preChatSurvey')?.questions || []
-  const postchatSurvey =
-    surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
+  // const surveys = await getSurvey()
+  // const prechatSurvey =
+  //   surveys.find((s) => s.title === 'preChatSurvey')?.questions || []
+  // const postchatSurvey =
+  //   surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
       {/* <Steps currentStep={currentStep ?? 3} chatID={params?.chatID} /> */}
