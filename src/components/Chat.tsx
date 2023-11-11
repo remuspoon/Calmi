@@ -11,6 +11,8 @@ import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import { ChatCompletionMessageParam } from '@/services/openai/chat'
+import { useAtom, useSetAtom } from 'jotai'
+import { chatProgressAtom } from '@/lib/state'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -25,6 +27,7 @@ function Chat() {
   const ref = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [endChat, setEndChat] = useState(false)
+  const setProgress = useSetAtom(chatProgressAtom)
 
   const handlePrint = () => {
     if (!ref.current) return
@@ -51,7 +54,14 @@ function Chat() {
       setMessages(m)
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
-
+      const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
+      console.log(lastUserMessage)
+      if (lastUserMessage) {
+        setProgress({
+          token: lastUserMessage.token!,
+          subtoken: lastUserMessage.subtoken!
+        })
+      }
       if (isForBot) {
         const reply = await getbotReply(m)
         if (!reply) return
@@ -102,13 +112,13 @@ function Chat() {
       const lastUserMessage = messages[messages.length - 1]
       console.log(lastUserMessage)
       const token = messages[messages.length - 1]?.token ?? 'START'
-      const subToken = messages[messages.length - 1]?.subtoken ?? 0
-      console.log(token, subToken)
+      const subtoken = messages[messages.length - 1]?.subtoken ?? 0
+      console.log(token, subtoken)
       const newMessage: ChatCompletionMessageParam<'user'> = {
         role: 'user',
         content,
         token,
-        subtoken: subToken
+        subtoken
       }
 
       // Add the user message to the state so we can see it immediately
@@ -130,6 +140,11 @@ function Chat() {
         await delay(r.content.length * 5)
       }
       await addMessageToFirestore(chatID, reply)
+
+      setProgress({
+        token,
+        subtoken
+      })
     } catch (error) {
     } finally {
       setIsLoadingAnswer(false)
