@@ -77,7 +77,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${user.displayName}! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 
