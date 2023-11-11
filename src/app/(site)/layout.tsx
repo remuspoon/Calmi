@@ -4,8 +4,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import ChatButton from '@/components/ChatButton'
-import MyChatButton from '@/components/MyChatButton'
+// import MyChatButton from '@/components/MyChatButton'
 import NextTopLoader from 'nextjs-toploader'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -57,12 +58,13 @@ export default function RootLayout({
               >
                 about
               </Link>
-              <MyChatButton />
+              {/* <MyChatButton /> */}
               <ChatButton label='topNav' />
             </div>
           </nav>
 
           <main className='flex-grow mt-5'>{children}</main>
+          <Toaster />
         </UserProvider>
       </body>
     </html>
