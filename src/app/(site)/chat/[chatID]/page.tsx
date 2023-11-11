@@ -1,10 +1,11 @@
-
-import Steps from '@/components/Steps'
-import Survey from '@/components/Survey'
+// import Steps from '@/components/Steps'
+// import Survey from '@/components/Survey'
 import { getSurvey } from '@/services/sanity/lib/queries'
 import dynamic from 'next/dynamic'
 
-const Chat = dynamic(() => import('../../../../components/Chat'), { ssr: false })
+const Chat = dynamic(() => import('../../../../components/Chat'), {
+  ssr: false
+})
 async function ChatPage({
   searchParams,
   params
@@ -12,11 +13,11 @@ async function ChatPage({
   searchParams: { currentStep: number; completed: number }
   params: { chatID: string }
 }) {
-  let currentStep = Number(searchParams.currentStep)
+  // let currentStep = Number(searchParams.currentStep)
 
   const completed = Boolean(Number(searchParams.completed))
 
-  if (!currentStep && !completed) currentStep = 0
+  // if (!currentStep && !completed) currentStep = 0
 
   const surveys = await getSurvey()
   const prechatSurvey =
@@ -25,10 +26,11 @@ async function ChatPage({
     surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
-      <Steps currentStep={currentStep ?? 3} chatID={params?.chatID} />
-      {currentStep === 0 && <Survey Questions={prechatSurvey} />}
-      {currentStep === 1 && <Chat />}
-      {currentStep === 2 && <Survey Questions={postchatSurvey} />}
+      {/* <Steps currentStep={currentStep ?? 3} chatID={params?.chatID} /> */}
+      {/* {currentStep === 0 && <Survey Questions={prechatSurvey} />} */}
+      {/* {currentStep === 1 && <Chat />} */}
+      <Chat />
+      {/* {currentStep === 2 && <Survey Questions={postchatSurvey} />} */}
       {completed && (
         <p className='mt-10 font-bold text-white text-center text-2xl'>
           Thank you for completing the survey
