@@ -47,7 +47,7 @@ function Chat() {
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
-      const m = await getMessagesFromFirestore(user.uid, chatID)
+      const m = await getMessagesFromFirestore(chatID)
       setMessages(m)
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
@@ -59,7 +59,7 @@ function Chat() {
         // Add the assistant message to the state
 
         setMessages((prevmsg) => [...prevmsg, ...reply])
-        await addMessageToFirestore(user.uid, chatID, reply)
+        await addMessageToFirestore(chatID, reply)
       }
 
       if (
@@ -81,10 +81,7 @@ function Chat() {
       }
       setMessages([systemMessage, welcomeMessage])
 
-      await addMessageToFirestore(user.uid, chatID, [
-        systemMessage,
-        welcomeMessage
-      ])
+      await addMessageToFirestore(chatID, [systemMessage, welcomeMessage])
     }
 
     // When no messages are present, we initialize the chat the system message and the welcome message
@@ -117,7 +114,7 @@ function Chat() {
       // Add the user message to the state so we can see it immediately
       setMessages((prvMsgs) => [...prvMsgs, newMessage])
 
-      await addMessageToFirestore(user.uid, chatID, newMessage)
+      await addMessageToFirestore(chatID, newMessage)
       let reply = await getbotReply([...messages, newMessage])
       if (!reply) return
 
@@ -132,7 +129,7 @@ function Chat() {
         setMessages((prevmsg) => [...prevmsg, r])
         await delay(r.content.length * 5)
       }
-      await addMessageToFirestore(user.uid, chatID, reply)
+      await addMessageToFirestore(chatID, reply)
     } catch (error) {
     } finally {
       setIsLoadingAnswer(false)

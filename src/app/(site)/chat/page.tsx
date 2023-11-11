@@ -21,7 +21,7 @@ function ChatDashboard() {
 
     const f = async () => {
       try {
-        const chats = await getChats(uid)
+        const chats = await getChats()
         setChats(chats)
       } catch (error) {
         console.log(error)
@@ -35,7 +35,7 @@ function ChatDashboard() {
 
   const handleDeleteChat = async (id: string) => {
     try {
-      await deleteChatFromFirestore(uid, id)
+      await deleteChatFromFirestore(id)
       setChats((prev) => prev.filter((c) => c.id !== id))
     } catch (error) {}
   }

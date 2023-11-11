@@ -34,7 +34,7 @@ export const getUser = async (id: string) => {
 }
 
 // get All chats
-export const getChats = async (uid: string) => {
+export const getChats = async () => {
   const q = query(collection(db, chatPath), orderBy('timeStamp', 'asc'))
   const querySnapshot = await getDocs(q)
   const chats: any[] = []
@@ -46,7 +46,7 @@ export const getChats = async (uid: string) => {
 }
 
 // create chat document at users/{uid}/chats/{chatID}
-export const createChat = async (uid: string) => {
+export const createChat = async () => {
   const chatDocRef = await addDoc(collection(db, chatPath), {
     timeStamp: serverTimestamp()
   })
@@ -65,7 +65,6 @@ function removeUndefinedAndNull(obj: any) {
 
 // add message to messages collection at users/{uid}/chats/{chatID}/messages
 export const addMessageToFirestore = async (
-  uid: string,
   chatID: string,
   message:
     | ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
@@ -85,7 +84,6 @@ export const addMessageToFirestore = async (
 }
 
 export const getMessagesFromFirestore = async (
-  uid: string,
   chatID: string,
   minTimestamp = new Date()
 ) => {
@@ -115,7 +113,7 @@ export const getMessagesFromFirestore = async (
 //   }
 // }
 
-export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
+export const deleteChatFromFirestore = async (chatID: string) => {
   const chatDocRef = doc(db, chatPath, chatID)
   await deleteDoc(chatDocRef)
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 
 function CopyChatURL() {

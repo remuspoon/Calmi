@@ -16,7 +16,7 @@ function ChatButton({ label }: { label: string }) {
     if (!user || user === 'loading') {
       user = await SigninWithGoogle()
     }
-    const chat = await createChat(user.uid)
+    const chat = await createChat()
     router.push(`/chat/${chat.id}`)
 
     setDisabled(false)
