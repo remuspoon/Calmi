@@ -34,6 +34,11 @@ export const getUser = async (id: string) => {
   }
 }
 
+export const updateUser = async (id: string, data: any) => {
+  const userDocref = doc(db, 'users', id)
+  await setDoc(userDocref, data)
+}
+
 // get All chats
 export const getChats = async (uid: string) => {
   const q = query(collection(db, chatPath(uid)), orderBy('timeStamp', 'asc'))

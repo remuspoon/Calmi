@@ -7,6 +7,7 @@ import ChatButton from '@/components/ChatButton'
 import MyChatButton from '@/components/MyChatButton'
 import NextTopLoader from 'nextjs-toploader'
 import { Toaster } from 'react-hot-toast'
+import MyAccount from '@/components/MyAccount'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -54,6 +55,7 @@ export default function RootLayout({
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
               <MyChatButton />
+              <MyAccount />
             </div>
           </nav>
 

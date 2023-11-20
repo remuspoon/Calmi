@@ -2,7 +2,8 @@
 import { getbotReply } from '@/lib/sendMessage'
 import {
   addMessageToFirestore,
-  getMessagesFromFirestore
+  getMessagesFromFirestore,
+  getUser
 } from '@/services/firebase/firestore'
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import { useUser } from './UserProvider'
@@ -71,6 +72,8 @@ function Chat() {
       }
 
       if (m.length) return
+      const userName = (await getUser(user.uid))!.displayName
+
       const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
         content:
@@ -78,7 +81,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${user.displayName}! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ${userName}! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 
