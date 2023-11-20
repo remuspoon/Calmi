@@ -13,6 +13,7 @@ import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import { ChatCompletionMessageParam } from '@/services/openai/chat'
 import { toast } from 'react-hot-toast'
+import { chat_closed, chat_opened } from '@/services/firebase/analytics'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -101,6 +102,13 @@ function Chat() {
     }
 
     scrollToBottom()
+
+    chat_opened(chatID)
+
+    return () => {
+      chat_closed(chatID)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatID, user])
 
