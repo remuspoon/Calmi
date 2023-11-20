@@ -30,7 +30,7 @@ const config: Config = {
 
           'base-100': '#EDD6BF',
 
-          info: '#ffffff',
+          info: '#E5E6D4',
 
           success: '#00ffff',
 

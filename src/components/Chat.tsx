@@ -153,7 +153,7 @@ function Chat() {
 
   console.log(message)
   return (
-    <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl'>
+    <div className='basis-full grow p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl bg-secondary'>
       <div className='grow w-full print:grow-0' ref={ref}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
@@ -173,11 +173,11 @@ function Chat() {
                     />
                   </div>
                 </div>
-                <div className='chat-header'>
+                {/* <div className='chat-header'>
                   {user.displayName}
-                  {/* <time className='text-xs opacity-50'>12:46</time> */}
-                </div>
-                <div className='chat-bubble bg-blue-500 text-white'>
+                  <time className='text-xs opacity-50'>12:46</time>
+                </div> */}
+                <div className='chat-bubble bg-primary text-white'>
                   {msg.content}
                 </div>
                 {/* <div className='chat-footer opacity-50'>Seen at 12:46</div> */}
@@ -209,11 +209,13 @@ function Chat() {
                     </svg>
                   </div>
                 </div>
-                <div className='chat-header'>
+                {/* <div className='chat-header'>
                   CBT Bot
-                  {/* <time className='text-xs opacity-50'>12:45</time> */}
+                  <time className='text-xs opacity-50'>12:45</time>
+                </div> */}
+                <div className='chat-bubble bg-info text-primary'>
+                  {msg.content}
                 </div>
-                <div className='chat-bubble'>{msg.content}</div>
                 {/* <div className='chat-footer opacity-50'>Delivered</div> */}
               </div>
             )
@@ -268,7 +270,7 @@ function Chat() {
           // type='text'
           ref={inputRef}
           placeholder='Type here'
-          className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0'
+          className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0 placeholder-slate-100'
           value={message}
           onKeyDownCapture={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -299,10 +301,7 @@ function Chat() {
         >
           Send
         </button>
-        <button
-          className='btn btn-secondary ml-2 btn-outline btn-sm'
-          onClick={handlePrint}
-        >
+        <button className='btn ml-2 btn-outline btn-sm' onClick={handlePrint}>
           print
         </button>
       </form>
