@@ -266,9 +266,11 @@ function Chat() {
           value={message}
           onChange={(e) => {
             setMessage(e.target.value)
+
             if (!inputRef?.current) return
             inputRef.current.style.height =
-              Math.min(inputRef?.current?.scrollHeight, 100) + 'px'
+              Math.min(Math.max(inputRef?.current?.scrollHeight, 46), 100) +
+              'px'
           }}
         />
         <button
