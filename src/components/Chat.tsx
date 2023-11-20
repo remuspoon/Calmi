@@ -146,6 +146,7 @@ function Chat() {
     await addMessage(message)
   }
 
+  console.log(message)
   return (
     <div className='basis-full grow  border-slate-700 border-2 p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl'>
       <div className='grow w-full print:grow-0' ref={ref}>
@@ -271,8 +272,8 @@ function Chat() {
               inputRef.current.style.height = 46 + 'px'
               handleSubmit()
             } else if (e.key === 'Enter' && e.shiftKey) {
-              console.log('shift enter')
-              setMessage((prev) => prev + '\n')
+              // console.log('shift enter')
+              // setMessage((prev) => prev + '\n')
             }
           }}
           onChange={(e) => {
