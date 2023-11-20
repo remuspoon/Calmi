@@ -139,8 +139,8 @@ function Chat() {
     }
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault()
     if (!message || isLoadingAnswer) return
     setMessage('')
     await addMessage(message)
@@ -264,6 +264,17 @@ function Chat() {
           placeholder='Type here'
           className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0'
           value={message}
+          onKeyDownCapture={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              if (!inputRef?.current) return
+              inputRef.current.style.height = 46 + 'px'
+              handleSubmit()
+            } else if (e.key === 'Enter' && e.shiftKey) {
+              console.log('shift enter')
+              setMessage((prev) => prev + '\n')
+            }
+          }}
           onChange={(e) => {
             setMessage(e.target.value)
             console.log(inputRef?.current?.scrollHeight)
