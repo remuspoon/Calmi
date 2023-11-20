@@ -72,8 +72,9 @@ function Chat() {
       }
 
       if (m.length) return
-      let userName = (await getUser(user.uid)) as string | undefined
-
+      let userName = (await getUser(user.uid)) as any
+      userName = userName?.displayName
+      console.log(userName)
       if (!userName) userName = user.displayName ?? 'User'
 
       const systemMessage: ChatCompletionMessageParam<'system'> = {
