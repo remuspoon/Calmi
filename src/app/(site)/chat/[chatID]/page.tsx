@@ -1,5 +1,6 @@
 import Steps from '@/components/Steps'
 import Survey from '@/components/Survey'
+import TimeTracker from '@/components/TimeTracker'
 import { getSurvey } from '@/services/sanity/lib/queries'
 import dynamic from 'next/dynamic'
 
@@ -36,6 +37,7 @@ async function ChatPage({
           Thank you for completing the survey
         </p>
       )}
+      <TimeTracker chatId={params.chatID} />
     </div>
   )
 }

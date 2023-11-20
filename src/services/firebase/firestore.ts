@@ -7,10 +7,12 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  increment,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where
 } from 'firebase/firestore'
 import app from '.'
@@ -54,9 +56,26 @@ export const getChats = async (uid: string) => {
 // create chat document at users/{uid}/chats/{chatID}
 export const createChat = async (uid: string) => {
   const chatDocRef = await addDoc(collection(db, chatPath(uid)), {
-    timeStamp: serverTimestamp()
+    timeStamp: serverTimestamp(),
+    timeSpent: 0,
+    completed: false,
+    summary: '',
+    distortedThoughts: '',
+    reframedThoughts: ''
   })
   return chatDocRef
+}
+
+export const updateChatSession = async (
+  uid: string,
+  chatID: string,
+  time: number
+) => {
+  console.log('updating chat session', time)
+  const chatDocRef = doc(db, chatPath(uid), chatID)
+  await updateDoc(chatDocRef, {
+    timeSpent: increment(time)
+  })
 }
 
 function removeUndefinedAndNull(obj: any) {
