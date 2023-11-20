@@ -5,7 +5,13 @@ import { useUser } from './UserProvider'
 import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-function MyChatButton() {
+function MyChatButton({
+  label,
+  className
+}: {
+  label?: string
+  className?: string
+}) {
   const user = useUser()
   const router = useRouter()
   const pathName = usePathname()
@@ -19,9 +25,9 @@ function MyChatButton() {
   return (
     <Link
       href={'/chat?uid=' + user?.uid}
-      className='btn-sm sm:btn-md btn btn-info btn-outline'
+      className={className || 'btn-sm sm:btn-md btn btn-info btn-outline'}
     >
-      My Chats
+      {label || 'Chat History'}
     </Link>
   )
 }
