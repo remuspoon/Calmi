@@ -1,3 +1,4 @@
+import ChatProgress from '@/components/ChatProgress'
 import Steps from '@/components/Steps'
 import Survey from '@/components/Survey'
 import TimeTracker from '@/components/TimeTracker'
@@ -27,6 +28,7 @@ async function ChatPage({
     surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
   return (
     <div className='flex flex-col container mx-auto min-h-screen'>
+      <ChatProgress />
       {/* <Steps currentStep={currentStep ?? 3} chatID={params?.chatID} /> */}
       {/* {currentStep === 0 && <Survey Questions={prechatSurvey} />} */}
       {/* {currentStep === 1 && <Chat />} */}

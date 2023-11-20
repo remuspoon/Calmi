@@ -1,7 +1,7 @@
 'use client'
 
 import { updateChatSession } from '@/services/firebase/firestore'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useUser } from './UserProvider'
 
 function TimeTracker({ chatId }: { chatId: string }) {
