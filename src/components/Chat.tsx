@@ -270,7 +270,7 @@ function Chat() {
           // type='text'
           ref={inputRef}
           placeholder='Type here'
-          className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0 placeholder-slate-100'
+          className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0 placeholder-slate-100 resize-none'
           value={message}
           onKeyDownCapture={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
