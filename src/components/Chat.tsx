@@ -72,7 +72,9 @@ function Chat() {
       }
 
       if (m.length) return
-      const userName = (await getUser(user.uid))!.displayName
+      let userName = (await getUser(user.uid)) as string | undefined
+
+      if (!userName) userName = user.displayName ?? 'User'
 
       const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
@@ -249,12 +251,12 @@ function Chat() {
                 </svg>
               </div>
             </div>
-            <div className='chat-header'>
+            {/* <div className='chat-header'>
               CBT Bot
-              {/* <time className='text-xs opacity-50'>12:45</time> */}
-            </div>
+              <time className='text-xs opacity-50'>12:45</time>
+            </div> */}
 
-            <div className='chat-bubble flex gap-2'>
+            <div className='chat-bubble bg-info text-primary flex gap-2'>
               <div className='bg-slate-600 p-2 delay-75  w-px h-px rounded-full animate-bounce'></div>
               <div className='bg-slate-600 p-2 delay-300 w-px h-px rounded-full animate-bounce'></div>
               <div className='bg-slate-600 p-2 delay-700  w-px h-px rounded-full animate-bounce'></div>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useUser } from './UserProvider'
 import { updateUser } from '@/services/firebase/firestore'
+import { toast } from 'react-hot-toast'
 
 function MyAccount() {
   const user = useUser()
@@ -46,6 +47,7 @@ function MyAccount() {
               className='btn btn-primary'
               onClick={async () => {
                 await updateUser(user.uid, { displayName: name })
+                toast.success('Name Updated!')
               }}
             >
               Save

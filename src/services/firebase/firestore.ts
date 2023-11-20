@@ -47,7 +47,7 @@ export const getChats = async (uid: string) => {
   querySnapshot.forEach((doc) => {
     chats.push({ ...doc.data(), id: doc.id })
   })
-
+  console.log(chats)
   return chats
 }
 
