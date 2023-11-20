@@ -11,6 +11,7 @@ import Image from 'next/image'
 import html2pdf from 'html2pdf.js'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import { ChatCompletionMessageParam } from '@/services/openai/chat'
+import { toast } from 'react-hot-toast'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -142,6 +143,10 @@ function Chat() {
   const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
     e?.preventDefault()
     if (!message || isLoadingAnswer) return
+    if (message.length > 2000) {
+      toast.error('Message too long')
+      return
+    }
     setMessage('')
     await addMessage(message)
   }
