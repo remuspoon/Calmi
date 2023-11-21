@@ -49,7 +49,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
       {chat.summary && (
         <>
           <p className='mt-2'>Summary:</p>
-          <p>{chat.summary}</p>
+          <p className={!expanded ? 'line-clamp-2' : ''}>{chat.summary}</p>
         </>
       )}
       {chat.completed && !expanded && (
@@ -86,25 +86,24 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
         </button>
       )}
 
-      {(expanded && chat.completed) ||
-        (!chat.completed && (
-          <div className='flex gap-2 justify-center'>
-            <Link
-              href={`/chat/${chat.id}?currentStep=1`}
-              className='btn btn-primary btn-sm text-white'
+      {((expanded && chat.completed) || !chat.completed) && (
+        <div className='flex gap-2 justify-center'>
+          <Link
+            href={`/chat/${chat.id}?currentStep=1`}
+            className='btn btn-primary btn-sm text-white'
+          >
+            View chat
+          </Link>
+          {chat.summary && (
+            <button
+              className='btn btn-primary btn-sm'
+              onClick={() => setExpanded(false)}
             >
-              View chat
-            </Link>
-            {chat.summary && (
-              <button
-                className='btn btn-primary btn-sm'
-                onClick={() => setExpanded(false)}
-              >
-                <span className='text-sm text-white'>View Less</span>
-              </button>
-            )}
-          </div>
-        ))}
+              <span className='text-sm text-white'>View Less</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
