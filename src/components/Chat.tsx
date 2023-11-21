@@ -93,6 +93,10 @@ function Chat() {
         lastMessage?.content.toLowerCase() == TERMINATING_MESSAGE.toLowerCase()
       ) {
         setEndChat(true)
+        setProgress({
+          token: 'END',
+          subtoken: 0
+        })
         return
       }
 
@@ -316,6 +320,7 @@ function Chat() {
       >
         <textarea
           // type='text'
+          disabled={endChat}
           ref={inputRef}
           placeholder='Type here'
           className='input input-bordered input-info basis-full focus:ring-0 focus:outline-0 placeholder-slate-100 resize-none'
