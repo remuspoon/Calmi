@@ -164,6 +164,7 @@ function Chat() {
       // end of the chat
       if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
         setEndChat(true)
+        postprocess(user.uid, chatID, newMessage, true, messages)
       }
 
       // Add the assistant message to the state
@@ -180,7 +181,7 @@ function Chat() {
         subtoken
       })
 
-      postprocess(user.uid, chatID, newMessage, messages)
+      postprocess(user.uid, chatID, newMessage)
     } catch (error) {
     } finally {
       setIsLoadingAnswer(false)

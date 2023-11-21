@@ -1,10 +1,10 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from './chat'
 const openAi = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY
 })
 export const chatCompletions = async (
-  messages: ChatCompletionMessageParam<'user'>[],
+  messages: ChatCompletionMessageParam<'user' | 'assistant'>[],
   systemMessage?: string
 ) => {
   messages = messages.map(

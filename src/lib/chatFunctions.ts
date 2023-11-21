@@ -4,6 +4,7 @@ import {
   GPTResponseType,
   TOKENS
 } from '@/services/openai/chat'
+import { summariseTheCause } from '@/services/openai/helper'
 
 export const getbotReply = async (
   messages: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
@@ -47,9 +48,20 @@ export const getbotReply = async (
 export const postprocess = async (
   userId: string,
   chatId: string,
-  latestUserMessage: ChatCompletionMessageParam<'user'>,
+  latestUserMessage?: ChatCompletionMessageParam<'user'>,
+  end = false,
   messages?: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
 ) => {
+  if (end && messages) {
+    const summary = await summariseTheCause(messages)
+    await updateChat(userId, chatId, {
+      completed: true,
+      summary
+    })
+    return
+  }
+  if (!latestUserMessage) return
+
   const distortedThoughts =
     latestUserMessage.token === 'atDistortion' &&
     latestUserMessage.subtoken === 0
