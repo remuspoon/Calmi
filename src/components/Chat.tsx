@@ -5,7 +5,13 @@ import {
   getMessagesFromFirestore,
   getUser
 } from '@/services/firebase/firestore'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import React, {
+  FormEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import { useUser } from './UserProvider'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
@@ -50,6 +56,10 @@ function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollToBottom = () =>
     messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' })
+
+  useLayoutEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   // initialize the chat
   useEffect(() => {

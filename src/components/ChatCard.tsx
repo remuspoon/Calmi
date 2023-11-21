@@ -31,38 +31,28 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
           })}
       </h1>
       {!chat.completed && <p>In Progress</p>}
-      {!chat.completed && (
+      {chat.reframedThoughts && (
         <>
           <p
             className={`font-semibold text-xl ${
               !expanded ? 'line-clamp-2' : ''
             }`}
           >
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident
-            omnis assumenda atque saepe debitis
+            {chat.reframedThoughts}
           </p>
           <p className='mt-2'>Automatic Thoughts:</p>
           <p className={!expanded ? 'line-clamp-2' : ''}>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iure
-            perferendis distinctio laudantium natus. Voluptates quisquam
-            architecto a repellendus quibusdam nobis rerum, similique, natus
-            debitis soluta, perspiciatis perferendis laudantium eveniet
-            consequatur.
+            {chat.distortedThoughts}
           </p>
         </>
       )}
-      {expanded && (
+      {chat.summary && (
         <>
           <p className='mt-2'>Summary:</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-            excepturi fugit deleniti. Laudantium quo quam, dolor ad molestiae
-            velit, voluptate assumenda accusantium quae ullam quasi excepturi
-            ducimus. Expedita, veritatis! Animi?
-          </p>
+          <p>{chat.summary}</p>
         </>
       )}
-      {!chat.completed && !expanded && (
+      {chat.completed && !expanded && (
         <button
           className='btn btn-primary btn-sm absolute bottom-2 right-2 shadow-md shadow-primary'
           onClick={() => setExpanded(true)}
@@ -96,22 +86,25 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
         </button>
       )}
 
-      {expanded && (
-        <div className='flex gap-2 justify-center'>
-          <Link
-            href={`/chat/${chat.id}?currentStep=1`}
-            className='btn btn-primary btn-sm text-white'
-          >
-            View chat
-          </Link>
-          <button
-            className='btn btn-primary btn-sm'
-            onClick={() => setExpanded(false)}
-          >
-            <span className='text-sm text-white'>View Less</span>
-          </button>
-        </div>
-      )}
+      {(expanded && chat.completed) ||
+        (!chat.completed && (
+          <div className='flex gap-2 justify-center'>
+            <Link
+              href={`/chat/${chat.id}?currentStep=1`}
+              className='btn btn-primary btn-sm text-white'
+            >
+              View chat
+            </Link>
+            {chat.summary && (
+              <button
+                className='btn btn-primary btn-sm'
+                onClick={() => setExpanded(false)}
+              >
+                <span className='text-sm text-white'>View Less</span>
+              </button>
+            )}
+          </div>
+        ))}
     </div>
   )
 }
