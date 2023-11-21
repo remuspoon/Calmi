@@ -49,6 +49,21 @@ export const getChats = async (uid: string) => {
   querySnapshot.forEach((doc) => {
     chats.push({ ...doc.data(), id: doc.id })
   })
+  return chats
+}
+
+// get completed chats
+export const getCompletedChats = async (uid: string) => {
+  const q = query(
+    collection(db, chatPath(uid)),
+    where('completed', '==', true),
+    orderBy('timeStamp', 'asc')
+  )
+  const querySnapshot = await getDocs(q)
+  const chats: any[] = []
+  querySnapshot.forEach((doc) => {
+    chats.push({ ...doc.data(), id: doc.id })
+  })
   console.log(chats)
   return chats
 }
