@@ -16,7 +16,7 @@ export default function Home() {
       <div className='flex gap-2'>
         <ChatButton label='New Chat' />
         <MyChatButton
-          label='My Thought List'
+          label='My Journal'
           className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold'
         />
       </div>

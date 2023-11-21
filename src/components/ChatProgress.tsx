@@ -17,7 +17,6 @@ function ChatProgress() {
   }, [chatProgress])
   return (
     <>
-      <p>Current Stage: {chatProgress.token} </p>
       <progress
         className='progress progress-primary w-full sticky top-20 z-50 bg-opacity-25 backdrop-blur-md'
         value={percent}

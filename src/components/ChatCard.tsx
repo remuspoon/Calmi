@@ -20,8 +20,8 @@ function ChatCard({ chat, setChats }: { chat: any; setChats: any }) {
   }
 
   return (
-    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 max-w-lg relative'>
-      <h1 className='font-semibold'>
+    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 w-96 md:w-3/4 relative mx-auto'>
+      <h1 className='font-semibold mr-4'>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()
           .toLocaleString(undefined, {
@@ -30,17 +30,27 @@ function ChatCard({ chat, setChats }: { chat: any; setChats: any }) {
             year: 'numeric'
           })}
       </h1>
-      <p className='font-semibold text-xl'>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident
-        omnis assumenda atque saepe debitis
-      </p>
-      <p className='mt-2'>Automatic Thoughts:</p>
-      <p className='line-clamp-2'>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iure
-        perferendis distinctio laudantium natus. Voluptates quisquam architecto
-        a repellendus quibusdam nobis rerum, similique, natus debitis soluta,
-        perspiciatis perferendis laudantium eveniet consequatur.
-      </p>
+      {!chat.completed && <p>In Progress</p>}
+      {!chat.completed && (
+        <>
+          <p
+            className={`font-semibold text-xl ${
+              !expanded ? 'line-clamp-2' : ''
+            }`}
+          >
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident
+            omnis assumenda atque saepe debitis
+          </p>
+          <p className='mt-2'>Automatic Thoughts:</p>
+          <p className={!expanded ? 'line-clamp-2' : ''}>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iure
+            perferendis distinctio laudantium natus. Voluptates quisquam
+            architecto a repellendus quibusdam nobis rerum, similique, natus
+            debitis soluta, perspiciatis perferendis laudantium eveniet
+            consequatur.
+          </p>
+        </>
+      )}
       {expanded && (
         <>
           <p className='mt-2'>Summary:</p>
@@ -51,6 +61,14 @@ function ChatCard({ chat, setChats }: { chat: any; setChats: any }) {
             ducimus. Expedita, veritatis! Animi?
           </p>
         </>
+      )}
+      {!chat.completed && !expanded && (
+        <button
+          className='btn btn-primary btn-sm absolute bottom-2 right-2 shadow-md shadow-primary'
+          onClick={() => setExpanded(true)}
+        >
+          <span className='text-sm text-white'>View More</span>
+        </button>
       )}
 
       <button
@@ -75,14 +93,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats: any }) {
           <line x1='14' x2='14' y1='11' y2='17' />
         </svg>
       </button>
-      {!expanded && (
-        <button
-          className='btn btn-primary btn-sm absolute bottom-2 right-2 shadow-md shadow-primary'
-          onClick={() => setExpanded(true)}
-        >
-          <span className='text-sm text-white'>View More</span>
-        </button>
-      )}
+
       {expanded && (
         <div className='flex gap-2 justify-center'>
           <Link
