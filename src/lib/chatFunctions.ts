@@ -1,3 +1,4 @@
+import { updateChat } from '@/services/firebase/firestore'
 import {
   ChatCompletionMessageParam,
   GPTResponseType,
@@ -40,5 +41,35 @@ export const getbotReply = async (
     )
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const postprocess = async (
+  userId: string,
+  chatId: string,
+  latestUserMessage: ChatCompletionMessageParam<'user'>,
+  messages?: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
+) => {
+  const distortedThoughts =
+    latestUserMessage.token === 'atDistortion' &&
+    latestUserMessage.subtoken === 0
+
+  const reframedThoughts =
+    latestUserMessage.token === 'crExercise' && latestUserMessage.subtoken === 3
+
+  if (distortedThoughts) {
+    await updateChat(userId, chatId, {
+      distortedThoughts: latestUserMessage.content
+    })
+
+    return
+  }
+
+  if (reframedThoughts) {
+    await updateChat(userId, chatId, {
+      reframedThoughts: latestUserMessage.content
+    })
+
+    return
   }
 }

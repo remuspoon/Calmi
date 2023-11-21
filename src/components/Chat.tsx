@@ -1,5 +1,5 @@
 'use client'
-import { getbotReply } from '@/lib/sendMessage'
+import { getbotReply, postprocess } from '@/lib/chatFunctions'
 import {
   addMessageToFirestore,
   getMessagesFromFirestore,
@@ -16,8 +16,7 @@ import { toast } from 'react-hot-toast'
 import { chat_closed, chat_opened } from '@/services/firebase/analytics'
 import { chatProgressAtom } from '@/lib/state'
 import { useSetAtom } from 'jotai'
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+import { delay } from '@/lib/utils'
 
 function Chat() {
   const [message, setMessage] = useState('')
@@ -27,12 +26,14 @@ function Chat() {
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
   const user = useUser()
   const chatID = useParams().chatID as string
-  const ref = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [endChat, setEndChat] = useState(false)
   const setProgress = useSetAtom(chatProgressAtom)
+
+  // print
+  const printRef = useRef<HTMLDivElement>(null)
   const handlePrint = () => {
-    if (!ref.current) return
+    if (!printRef.current) return
 
     const opt = {
       margin: 1,
@@ -42,12 +43,14 @@ function Chat() {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     }
 
-    html2pdf().set(opt).from(ref.current).save()
+    html2pdf().set(opt).from(printRef.current).save()
   }
 
+  // scroll to bottom
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollToBottom = () =>
     messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' })
+
   // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
@@ -125,14 +128,15 @@ function Chat() {
 
   if (user === 'loading' || !user || !chatID) return null
 
+  // add message to firestore and get reply from bot
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
-      const lastUserMessage = messages[messages.length - 1]
-      console.log(lastUserMessage)
+      // const lastUserMessage = messages[messages.length - 1]
+      // console.log(lastUserMessage)
       const token = messages[messages.length - 1]?.token ?? 'START'
       const subtoken = messages[messages.length - 1]?.subtoken ?? 0
-      console.log(token, subtoken)
+
       const newMessage: ChatCompletionMessageParam<'user'> = {
         role: 'user',
         content,
@@ -153,23 +157,27 @@ function Chat() {
       }
 
       // Add the assistant message to the state
-
       for (const r of reply) {
         setMessages((prevmsg) => [...prevmsg, r])
         await delay(r.content.length * 5)
       }
+
+      // save to firestore
       await addMessageToFirestore(user.uid, chatID, reply)
 
       setProgress({
         token,
         subtoken
       })
+
+      postprocess(user.uid, chatID, newMessage, messages)
     } catch (error) {
     } finally {
       setIsLoadingAnswer(false)
     }
   }
 
+  // handle submit
   const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
     e?.preventDefault()
     if (!message || isLoadingAnswer) return
@@ -184,7 +192,7 @@ function Chat() {
   console.log(message)
   return (
     <div className='basis-full grow p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl bg-secondary'>
-      <div className='grow w-full print:grow-0' ref={ref}>
+      <div className='grow w-full print:grow-0' ref={printRef}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
           if (msg.role === 'system' || msg.content === TERMINATING_MESSAGE) {

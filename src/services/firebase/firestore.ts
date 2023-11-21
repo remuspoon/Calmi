@@ -93,6 +93,11 @@ export const updateChatSession = async (
   })
 }
 
+export const updateChat = async (uid: string, chatID: string, data: any) => {
+  const chatDocRef = doc(db, chatPath(uid), chatID)
+  await updateDoc(chatDocRef, data)
+}
+
 function removeUndefinedAndNull(obj: any) {
   const cleanedObject: any = {}
   for (const key in obj) {
