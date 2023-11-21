@@ -1,3 +1,5 @@
+import 'server-only'
+
 import openai, { chatCompletions } from '.'
 import { ChatCompletionMessageParam } from './chat'
 
@@ -71,5 +73,21 @@ export const summariseTheCause = async (
     "Summarise the cause of the user's distress in less than 3 sentences and write in first person"
   )
 
+  console.log('summariseTheCause', res)
   return res
+}
+
+export const rephrase = async (text: string) => {
+  const prompt = `Rephrase the following sentence: ${text}`
+
+  const result = await openai.completions.create({
+    model: 'davinci',
+    prompt,
+    temperature: 0
+  })
+
+  const response = result.choices[0].text
+  console.log('rephrase', response)
+
+  return response
 }

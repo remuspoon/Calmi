@@ -1,7 +1,9 @@
+import 'server-only'
+
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from './chat'
 const openAi = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 })
 export const chatCompletions = async (
   messages: ChatCompletionMessageParam<'user' | 'assistant'>[],

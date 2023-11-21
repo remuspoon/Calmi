@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { chatCompletions } from '../'
 import { isSuicidal } from '../helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'

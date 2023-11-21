@@ -4,7 +4,6 @@ import {
   GPTResponseType,
   TOKENS
 } from '@/services/openai/chat'
-import { summariseTheCause } from '@/services/openai/helper'
 
 export const getbotReply = async (
   messages: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
@@ -53,7 +52,13 @@ export const postprocess = async (
   messages?: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
 ) => {
   if (end && messages) {
-    const summary = await summariseTheCause(messages)
+    const summary = await fetch('/chat/api/summary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messages })
+    })
     await updateChat(userId, chatId, {
       completed: true,
       summary
@@ -70,16 +75,32 @@ export const postprocess = async (
     latestUserMessage.token === 'crExercise' && latestUserMessage.subtoken === 3
 
   if (distortedThoughts) {
+    // const gptRephrased = await fetch('/chat/api/reframedThought', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ content: latestUserMessage.content })
+    // })
+
     await updateChat(userId, chatId, {
-      distortedThoughts: latestUserMessage.content
+      distortedThoughts: latestUserMessage.content // gptRephrased
     })
 
     return
   }
 
   if (reframedThoughts) {
+    // const gptReframed = await fetch('/chat/api/reframedThought', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ content: latestUserMessage.content })
+    // })
+
     await updateChat(userId, chatId, {
-      reframedThoughts: latestUserMessage.content
+      reframedThoughts: latestUserMessage.content // gptReframed
     })
 
     return
