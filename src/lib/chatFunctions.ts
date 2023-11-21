@@ -52,16 +52,18 @@ export const postprocess = async (
   messages?: ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
 ) => {
   if (end && messages) {
-    const summary = await fetch('/chat/api/summary', {
+    let summary = await fetch('/chat/api/summary', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ messages })
     })
+
+    summary = await summary.json()
     await updateChat(userId, chatId, {
       completed: true,
-      summary
+      summary: summary
     })
     return
   }
@@ -75,32 +77,36 @@ export const postprocess = async (
     latestUserMessage.token === 'crExercise' && latestUserMessage.subtoken === 3
 
   if (distortedThoughts) {
-    // const gptRephrased = await fetch('/chat/api/reframedThought', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ content: latestUserMessage.content })
-    // })
+    let gptRephrased = await fetch('/chat/api/reframedThought', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ content: latestUserMessage.content })
+    })
+
+    gptRephrased = await gptRephrased.json()
 
     await updateChat(userId, chatId, {
-      distortedThoughts: latestUserMessage.content // gptRephrased
+      distortedThoughts: gptRephrased // latestUserMessage.content
     })
 
     return
   }
 
   if (reframedThoughts) {
-    // const gptReframed = await fetch('/chat/api/reframedThought', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ content: latestUserMessage.content })
-    // })
+    let gptReframed = await fetch('/chat/api/reframedThought', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ content: latestUserMessage.content })
+    })
+
+    gptReframed = await gptReframed.json()
 
     await updateChat(userId, chatId, {
-      reframedThoughts: latestUserMessage.content // gptReframed
+      reframedThoughts: gptReframed // latestUserMessage.content
     })
 
     return

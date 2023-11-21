@@ -200,7 +200,6 @@ function Chat() {
     await addMessage(message)
   }
 
-  console.log(message)
   return (
     <div className='basis-full grow p-4 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl bg-secondary'>
       <div className='grow w-full print:grow-0' ref={printRef}>
@@ -334,7 +333,6 @@ function Chat() {
           }}
           onChange={(e) => {
             setMessage(e.target.value)
-            console.log(inputRef?.current?.scrollHeight)
             if (!inputRef?.current) return
             inputRef.current.style.height =
               Math.min(

@@ -78,16 +78,9 @@ export const summariseTheCause = async (
 }
 
 export const rephrase = async (text: string) => {
-  const prompt = `Rephrase the following sentence: ${text}`
-
-  const result = await openai.completions.create({
-    model: 'davinci',
-    prompt,
-    temperature: 0
-  })
-
-  const response = result.choices[0].text
-  console.log('rephrase', response)
-
-  return response
+  const res = await chatCompletions(
+    [{ content: text, role: 'user', token: 'START', subtoken: 1 }],
+    'Rephrase the user response properly and write it in first person'
+  )
+  return res
 }

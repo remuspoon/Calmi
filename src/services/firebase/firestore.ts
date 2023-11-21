@@ -86,7 +86,6 @@ export const updateChatSession = async (
   chatID: string,
   time: number
 ) => {
-  console.log('updating chat session', time)
   const chatDocRef = doc(db, chatPath(uid), chatID)
   await updateDoc(chatDocRef, {
     timeSpent: increment(time)
@@ -163,6 +162,12 @@ export const getSurveyFromFirestore = async (uid: string, chatID: string) => {
 export const deleteChatFromFirestore = async (uid: string, chatID: string) => {
   const chatDocRef = doc(db, chatPath(uid), chatID)
   await deleteDoc(chatDocRef)
+  // delete messages
+  const q = query(collection(db, messagesPath(uid, chatID)))
+  const querySnapshot = await getDocs(q)
+  querySnapshot.forEach(async (doc) => {
+    await deleteDoc(doc.ref)
+  })
 }
 
 export const addSurveyToFirestore = async (
