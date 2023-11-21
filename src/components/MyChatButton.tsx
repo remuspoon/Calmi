@@ -7,10 +7,12 @@ import { usePathname, useRouter } from 'next/navigation'
 
 function MyChatButton({
   label,
-  className
+  className,
+  href
 }: {
   label?: string
   className?: string
+  href?: string
 }) {
   const user = useUser()
   const router = useRouter()
@@ -24,7 +26,7 @@ function MyChatButton({
   if (user === 'loading' || !user) return null
   return (
     <Link
-      href={'/chat?uid=' + user?.uid}
+      href={href || '/chat?uid=' + user?.uid}
       className={className || 'btn-sm sm:btn-md btn btn-info btn-outline'}
     >
       {label || 'Chat History'}

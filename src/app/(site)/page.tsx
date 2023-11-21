@@ -18,6 +18,7 @@ export default function Home() {
         <MyChatButton
           label='My Journal'
           className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold'
+          href='myjournal'
         />
       </div>
     </div>
