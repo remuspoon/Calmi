@@ -70,7 +70,6 @@ function Chat() {
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
       const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
-      console.log(lastUserMessage)
 
       if (lastUserMessage) {
         setProgress({

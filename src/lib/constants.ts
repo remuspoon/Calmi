@@ -21,6 +21,7 @@ export const TERMINATING_MESSAGE = 'End'
 // ]
 
 const CHATSTAGES: TOKENS[] = [
+  'START',
   'introduction',
   'rapportBuilding',
   'atExplanation',
