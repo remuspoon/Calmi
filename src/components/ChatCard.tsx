@@ -33,7 +33,13 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
             year: 'numeric'
           })}
       </h1>
-      <p>{!chat.completed && setChats ? 'In Progress' : 'Complete'}</p>
+      <p>
+        {!chat.completed && setChats
+          ? 'In Progress'
+          : chat.completed && setChats
+          ? 'Complete'
+          : ''}
+      </p>
       {!setChats && chat.reframedThoughts && (
         <>
           <p
