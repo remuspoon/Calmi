@@ -7,17 +7,17 @@ export default function Home() {
       <p className='uppercase font-black leading-10 text-7xl tracking-wider mb-8'>
         CBTChat Bot
       </p>
-      <p className='container mx-auto text-lg text-primary font-semibold'>
+      <p className='w-3/4 mx-auto text-lg text-primary font-semibold'>
         Discover the power of Cognitive Behavioral Therapy (CBT) with our
         interactive chatbot. Our CBTChat Bot is designed to guide you through
         evidence-based techniques that can help improve your mental well-being
         and promote positive change.
       </p>
-      <div className='flex gap-2'>
-        <ChatButton label='New Chat' />
+      <div className='flex gap-2 mt-4'>
+        <ChatButton label="Let's Chat" />
         <MyChatButton
           label='My Journal'
-          className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold'
+          className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold text-xl'
           href='myjournal'
         />
       </div>
