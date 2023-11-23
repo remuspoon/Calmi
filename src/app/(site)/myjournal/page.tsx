@@ -19,10 +19,8 @@ function Page() {
     }
   }, [user])
 
-  if (!user || user === 'loading') return <div>Loading...</div>
+  if (!user || user === 'loading' || loading) return <div>Loading...</div>
   if (journals.length === 0 && !loading) return <div>No journals</div>
-
-  loading && <div>Loading...</div>
 
   return (
     <div className='flex container mx-auto flex-wrap gap-2'>
