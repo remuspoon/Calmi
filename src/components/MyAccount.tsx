@@ -26,11 +26,11 @@ function MyAccount() {
     )
   return (
     <div>
-      <div className='avatar' onClick={() => setShowModal(true)}>
+      <button className='avatar' onClick={() => setShowModal(true)}>
         <div className='w-12 rounded-full'>
           <img src={user.photoURL || ''} />
         </div>
-      </div>
+      </button>
       <dialog ref={dialogRef} className='modal modal-middle'>
         <div className='modal-box'>
           <h3 className='font-bold text-lg'>Edit Your Name!</h3>
