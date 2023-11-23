@@ -16,13 +16,13 @@ function ChatProgress() {
     }
   }, [chatProgress])
   return (
-    <>
+    <div className='w-full px-4 sm:px-0 sticky top-20 z-50 '>
       <progress
-        className='progress progress-primary w-full sticky top-20 z-50 bg-opacity-25 backdrop-blur-md'
+        className='block progress progress-primary bg-opacity-25 backdrop-blur-md w-full'
         value={percent}
         max='100'
       />
-    </>
+    </div>
   )
 }
 
