@@ -33,7 +33,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
             year: 'numeric'
           })}
       </h1>
-      <p>{!chat.completed ? 'In Progress' : 'Complete'}</p>
+      <p>{!chat.completed && setChats ? 'In Progress' : 'Complete'}</p>
       {!setChats && chat.reframedThoughts && (
         <>
           <p
@@ -55,15 +55,18 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
           <p className={!expanded ? 'line-clamp-2' : ''}>{chat.summary}</p>
         </>
       )}
-      {chat.completed && !expanded && !setChats && (
+      {chat.completed && !setChats && (
         <button
-          className='btn btn-primary btn-sm absolute bottom-2 right-2 shadow-md shadow-primary'
-          onClick={() => setExpanded(true)}
+          className={
+            'absolute bottom-2 right-2 shadow-md shadow-primary ' + customButton
+          }
+          onClick={() => setExpanded((p) => !p)}
         >
-          <span className='text-sm text-white'>View More</span>
+          {!expanded ? 'View More' : 'View Less'}
         </button>
       )}
 
+      {/* delete button */}
       {setChats && (
         <button
           className='hover:text-red-400 absolute top-2 right-2'
@@ -89,21 +92,13 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
         </button>
       )}
 
-      {((expanded && chat.completed) || !chat.completed) && (
-        <div className='flex gap-2 justify-center'>
-          <Link
-            href={`/chat/${chat.id}?currentStep=1`}
-            className={customButton}
-          >
-            View chat
-          </Link>
-          {chat.summary && (
-            <button className={customButton} onClick={() => setExpanded(false)}>
-              <span className='text-white'>View Less</span>
-            </button>
-          )}
-        </div>
-      )}
+      {/* View Chat button */}
+
+      <div className='flex gap-2 justify-center'>
+        <Link href={`/chat/${chat.id}?currentStep=1`} className={customButton}>
+          View chat
+        </Link>
+      </div>
     </div>
   )
 }
