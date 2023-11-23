@@ -44,7 +44,7 @@ export default function RootLayout({
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
               <div className='hidden sm:block'>
-                <MyChatButton label='My Journal' href='myjournal' />
+                <MyChatButton label='My Journal' href='/myjournal' />
               </div>
               <MyChatButton />
               <MyAccount />

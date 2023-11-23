@@ -20,7 +20,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
   }
 
   return (
-    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 grow'>
+    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl'>
       <h1 className='font-semibold mr-4'>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()
@@ -99,7 +99,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
               className='btn btn-primary btn-sm'
               onClick={() => setExpanded(false)}
             >
-              <span className='text-sm text-white'>View Less</span>
+              <span className='text-white'>View Less</span>
             </button>
           )}
         </div>

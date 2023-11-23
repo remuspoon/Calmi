@@ -23,7 +23,7 @@ function Page() {
   if (journals.length === 0 && !loading) return <div>No journals</div>
 
   return (
-    <div className='flex flex-col container mx-auto flex-wrap gap-2'>
+    <div className='container mx-auto grid grid-cols-1 gap-2'>
       {journals.map((journal) => (
         <ChatCard chat={journal} key={journal.id} />
       ))}
