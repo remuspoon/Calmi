@@ -204,7 +204,7 @@ function Chat() {
   }
 
   return (
-    <div className='basis-full grow mt-5 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-full p-4 bg-secondary'>
+    <div className='basis-full grow mt-5 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl p-4 bg-secondary'>
       <div className='grow w-full print:grow-0' ref={printRef}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user'
