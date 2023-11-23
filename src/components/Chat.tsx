@@ -264,7 +264,7 @@ function Chat() {
                   CBT Bot
                   <time className='text-xs opacity-50'>12:45</time>
                 </div> */}
-                <div className='chat-bubble bg-info text-primary'>
+                <div className='chat-bubble bg-info text-black'>
                   {msg.content}
                 </div>
                 {/* <div className='chat-footer opacity-50'>Delivered</div> */}

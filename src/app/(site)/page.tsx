@@ -4,7 +4,7 @@ import MyChatButton from '@/components/MyChatButton'
 export default function Home() {
   return (
     <div className='container border-slate-700 p-4 rounded-md mt-[20vh] flex items-center text-center justify-center flex-col'>
-      <p className='uppercase font-bold leading-10 text-7xl tracking-wider mb-8'>
+      <p className='uppercase font-black leading-10 text-7xl tracking-wider mb-8'>
         CBTChat Bot
       </p>
       <p className='text-lg text-primary font-semibold'>

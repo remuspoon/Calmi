@@ -1,7 +1,7 @@
 import UserProvider from '@/components/UserProvider'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Varela_Round } from 'next/font/google'
 import Link from 'next/link'
 import ChatButton from '@/components/ChatButton'
 import MyChatButton from '@/components/MyChatButton'
@@ -9,7 +9,11 @@ import NextTopLoader from 'nextjs-toploader'
 import { Toaster } from 'react-hot-toast'
 import MyAccount from '@/components/MyAccount'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Varela_Round({
+  display: 'swap',
+  weight: '400',
+  subsets: ['vietnamese', 'latin-ext']
+})
 
 export const metadata: Metadata = {
   title: 'CBT Chat',
