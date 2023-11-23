@@ -33,8 +33,8 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
             year: 'numeric'
           })}
       </h1>
-      {!chat.completed && <p>In Progress</p>}
-      {chat.reframedThoughts && (
+      <p>{!chat.completed ? 'In Progress' : 'Complete'}</p>
+      {!setChats && chat.reframedThoughts && (
         <>
           <p
             className={`font-semibold text-xl ${
@@ -49,7 +49,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
           </p>
         </>
       )}
-      {chat.summary && (
+      {!setChats && chat.summary && (
         <>
           <p className='mt-2'>Summary:</p>
           <p className={!expanded ? 'line-clamp-2' : ''}>{chat.summary}</p>

@@ -28,7 +28,7 @@ function ChatDashboard() {
   if (!uid) return null
 
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-fill-40 gap-2 container mx-auto'>
       {chats.map((c) => (
         <ChatCard chat={c} setChats={setChats} key={c.id} />
       ))}
