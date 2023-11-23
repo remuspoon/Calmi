@@ -22,6 +22,7 @@ function ChatButton({ label }: { label: string }) {
 
       if (res.isNewUser) {
         seteditAccountModal(true)
+        return
       }
     }
     const chat = await createChat(user.uid)
