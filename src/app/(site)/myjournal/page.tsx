@@ -18,7 +18,7 @@ function Page() {
   if (!user || user === 'loading') return <div>Loading...</div>
   if (journals.length === 0) return <div>No journals</div>
   return (
-    <div>
+    <div className='flex flex-wrap'>
       {journals.map((journal) => {
         return <ChatCard chat={journal} key={journal.id} />
       })}

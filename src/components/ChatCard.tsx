@@ -20,7 +20,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
   }
 
   return (
-    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 w-96 md:w-3/4 relative mx-auto'>
+    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 grow'>
       <h1 className='font-semibold mr-4'>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()

@@ -18,8 +18,6 @@ function ChatButton({ label }: { label: string }) {
     }
     const chat = await createChat(user.uid)
     router.push(`/chat/${chat.id}`)
-
-    setDisabled(false)
   }
   return (
     <button
