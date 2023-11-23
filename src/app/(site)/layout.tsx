@@ -58,6 +58,7 @@ export default function RootLayout({
               </h1>
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
+              <MyChatButton label='My Journal' href='myjournal' />
               <MyChatButton />
               <MyAccount />
             </div>
