@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useUser } from './UserProvider'
 import { updateUser } from '@/services/firebase/firestore'
 import { toast } from 'react-hot-toast'
+import { useAtom } from 'jotai'
+import { editAccountModalAtom } from '@/lib/state'
 
 function MyAccount() {
   const user = useUser()
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useAtom(editAccountModalAtom)
   const [name, setName] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
   useEffect(() => {
