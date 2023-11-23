@@ -3,7 +3,9 @@ import {
   User,
   getAuth,
   signInAnonymously,
-  signInWithPopup
+  signInWithPopup,
+  AdditionalUserInfo,
+  getAdditionalUserInfo
 } from 'firebase/auth'
 import app from '.'
 
@@ -12,12 +14,11 @@ const auth = getAuth(app)
 export const SigninWithGoogle = async () => {
   const provider = new GoogleAuthProvider()
   const result = await signInWithPopup(auth, provider)
-  // const credential = GoogleAuthProvider.credentialFromResult(result)
 
-  // const token = credential?.accessToken
+  const additionalUserInfo = getAdditionalUserInfo(result)
 
   const user = result.user
-  return user
+  return { user, isNewUser: additionalUserInfo?.isNewUser }
 }
 
 export const SignInAnonymously = async () => {

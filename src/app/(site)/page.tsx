@@ -7,7 +7,7 @@ export default function Home() {
       <p className='uppercase font-black leading-10 text-7xl tracking-wider mb-8'>
         CBTChat Bot
       </p>
-      <p className='text-lg text-primary font-semibold'>
+      <p className='container mx-auto text-lg text-primary font-semibold'>
         Discover the power of Cognitive Behavioral Therapy (CBT) with our
         interactive chatbot. Our CBTChat Bot is designed to guide you through
         evidence-based techniques that can help improve your mental well-being

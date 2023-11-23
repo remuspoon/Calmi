@@ -3,3 +3,5 @@ export const chatProgressAtom = atom({
   token: '',
   subtoken: 0
 })
+
+export const editAccountModalAtom = atom(false)
