@@ -43,7 +43,7 @@ export const updateUser = async (id: string, data: any) => {
 
 // get All chats
 export const getChats = async (uid: string) => {
-  const q = query(collection(db, chatPath(uid)), orderBy('timeStamp', 'asc'))
+  const q = query(collection(db, chatPath(uid)), orderBy('timeStamp', 'desc'))
   const querySnapshot = await getDocs(q)
   const chats: any[] = []
   querySnapshot.forEach((doc) => {
@@ -57,7 +57,7 @@ export const getCompletedChats = async (uid: string) => {
   const q = query(
     collection(db, chatPath(uid)),
     where('completed', '==', true),
-    orderBy('timeStamp', 'asc')
+    orderBy('timeStamp', 'desc')
   )
   const querySnapshot = await getDocs(q)
   const chats: any[] = []
