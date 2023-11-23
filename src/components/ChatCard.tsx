@@ -55,7 +55,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
           <p className={!expanded ? 'line-clamp-2' : ''}>{chat.summary}</p>
         </>
       )}
-      {chat.completed && !expanded && (
+      {chat.completed && !expanded && !setChats && (
         <button
           className='btn btn-primary btn-sm absolute bottom-2 right-2 shadow-md shadow-primary'
           onClick={() => setExpanded(true)}
