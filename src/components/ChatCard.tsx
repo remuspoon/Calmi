@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { useUser } from './UserProvider'
 import { useState } from 'react'
 
+const customButton =
+  'border border-primary rounded px-4 bg-secondary hover:bg-primary hover:text-secondary font-semibold'
+
 function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
   const user = useUser()
   const [expanded, setExpanded] = useState(false)
@@ -20,7 +23,7 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
   }
 
   return (
-    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl'>
+    <div className='flex-col gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl border border-black'>
       <h1 className='font-semibold mr-4'>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()
@@ -90,15 +93,12 @@ function ChatCard({ chat, setChats }: { chat: any; setChats?: any }) {
         <div className='flex gap-2 justify-center'>
           <Link
             href={`/chat/${chat.id}?currentStep=1`}
-            className='btn btn-primary btn-sm text-white'
+            className={customButton}
           >
             View chat
           </Link>
           {chat.summary && (
-            <button
-              className='btn btn-primary btn-sm'
-              onClick={() => setExpanded(false)}
-            >
+            <button className={customButton} onClick={() => setExpanded(false)}>
               <span className='text-white'>View Less</span>
             </button>
           )}
