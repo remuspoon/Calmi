@@ -17,6 +17,8 @@ export const SigninWithGoogle = async () => {
 
   const additionalUserInfo = getAdditionalUserInfo(result)
 
+  console.log(additionalUserInfo)
+
   const user = result.user
   return { user, isNewUser: additionalUserInfo?.isNewUser }
 }
