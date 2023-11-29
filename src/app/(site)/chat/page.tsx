@@ -30,7 +30,7 @@ function ChatDashboard() {
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-fill-40 gap-2 container mx-auto'>
       {chats.map((c) => (
-        <ChatCard chat={c} setChats={setChats} key={c.id} />
+        <ChatCard chat={c} setChats={setChats} key={c.id} page='history' />
       ))}
     </div>
   )
