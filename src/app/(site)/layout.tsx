@@ -38,15 +38,14 @@ export default function RootLayout({
         <UserProvider>
           <nav className='sticky z-10 backdrop-blur top-0 w-full flex items-center gap-2 px-5 py-3 print:hidden bg-primary'>
             <Link href={'/'} className='flex gap-2'>
-              <h1 className='font-bold text-2xl text-[#FDFEEB]'>
-                CALMI
-              </h1>
+              <h1 className='font-bold text-2xl text-[#FDFEEB]'>CALMI</h1>
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
+              <MyChatButton label='My Journal' href='/myjournal' />
               <div className='hidden sm:block'>
-                <MyChatButton label='My Journal' href='/myjournal' />
+                <MyChatButton />
               </div>
-              <MyChatButton />
+
               <MyAccount />
             </div>
           </nav>
