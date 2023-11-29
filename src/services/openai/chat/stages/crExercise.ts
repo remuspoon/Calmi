@@ -1,3 +1,4 @@
+import { TERMINATING_MESSAGE } from '@/lib/constants'
 import { RESPONSE_TYPE } from '..'
 import { chatCompletions } from '../..'
 import { staticResponse, userAffirmed } from '../../helper'
@@ -59,7 +60,9 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
 
         'You challenged your thought based on a clearer perspective, and craft a balanced, realistic alternative response. Now, whenever the negative thought arises, go to "My Journal" and remind yourself of this alternative response. Over time, this practice will not only shift your thinking patterns but also positively influence your emotions and actions, leading to healthier responses to situations.',
 
-        'Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have wonderful day!'
+        'Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have a wonderful day!',
+
+        TERMINATING_MESSAGE
       ])()
       return res
     },

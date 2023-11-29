@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className='container border-slate-700 p-4 rounded-md mt-[20vh] flex items-center text-center justify-center flex-col'>
       <p className='uppercase font-black leading-10 text-7xl tracking-wider mb-8'>
-        CBTChat Bot
+        CALMI
       </p>
       <p className='w-3/4 mx-auto text-lg text-primary font-semibold'>
         Discover the power of Cognitive Behavioral Therapy (CBT) with our

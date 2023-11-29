@@ -108,11 +108,11 @@ function Chat() {
       const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
         content:
-          "You are a therapeutic chat bot called 'Li' with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
+          "You are a therapeutic chat bot called Calmi with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${userName}! I'm Li, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ${userName}! I'm Calmi, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 

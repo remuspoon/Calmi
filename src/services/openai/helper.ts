@@ -70,7 +70,7 @@ export const summariseTheCause = async (
 
   const res = await chatCompletions(
     filtered,
-    "Summarise the cause of the user's distress in less than 3 sentences and write in first person"
+    "Summarise the cause of the user's distress in less than 3 sentences and write in first person and past tense"
   )
 
   console.log('summariseTheCause', res)
