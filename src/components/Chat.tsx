@@ -71,10 +71,10 @@ function Chat() {
       const isForBot = lastMessage?.role === 'user'
       const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
 
-      if (lastUserMessage) {
+      if (lastMessage) {
         setProgress({
-          token: lastUserMessage.token!,
-          subtoken: lastUserMessage.subtoken!
+          token: lastMessage.token!,
+          subtoken: lastMessage.subtoken!
         })
       }
 
@@ -102,7 +102,7 @@ function Chat() {
       if (m.length) return
       let userName = (await getUser(user.uid)) as any
       userName = userName?.displayName
-      console.log(userName)
+
       if (!userName) userName = user.displayName ?? 'User'
 
       const systemMessage: ChatCompletionMessageParam<'system'> = {
@@ -133,7 +133,11 @@ function Chat() {
     chat_opened(chatID)
 
     return () => {
-      chat_closed(chatID)
+      chat_closed(chatID),
+        setProgress({
+          token: 'START',
+          subtoken: 0
+        })
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
