@@ -25,7 +25,12 @@ function Page() {
   return (
     <div className='container mx-auto grid grid-cols-1 gap-2'>
       {journals.map((journal) => (
-        <ChatCard chat={journal} key={journal.id} />
+        <ChatCard
+          chat={journal}
+          key={journal.id}
+          setChats={setJournals}
+          page='journal'
+        />
       ))}
     </div>
   )

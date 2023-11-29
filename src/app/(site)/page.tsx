@@ -7,7 +7,7 @@ export default function Home() {
       <p className='uppercase font-black leading-10 text-7xl tracking-wider mb-8'>
         CALMI
       </p>
-      <p className='w-3/4 mx-auto text-lg text-primary font-semibold'>
+      <p className='w-3/4 mx-auto sm:text-lg text-primary font-semibold'>
         Discover the power of Cognitive Behavioral Therapy (CBT) with our
         interactive chatbot. Our CBTChat Bot is designed to guide you through
         evidence-based techniques that can help improve your mental well-being
@@ -17,7 +17,7 @@ export default function Home() {
         <ChatButton label="Let's Chat" />
         <MyChatButton
           label='My Journal'
-          className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold text-xl'
+          className='btn btn-primary btn-sm sm:btn-md sm:w-40 text-white font-bold w-36'
           href='myjournal'
         />
       </div>
