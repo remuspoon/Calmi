@@ -30,7 +30,7 @@ function ChatButton({ label }: { label: string }) {
   }
   return (
     <button
-      className='btn btn-primary btn-sm sm:btn-md w-40 text-white font-bold'
+      className='btn btn-primary btn-sm sm:btn-md sm:w-40 w-36 text-white font-bold'
       onClick={handleClick}
       disabled={disabled}
     >
