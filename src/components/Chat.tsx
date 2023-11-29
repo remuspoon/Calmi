@@ -108,7 +108,7 @@ function Chat() {
       const systemMessage: ChatCompletionMessageParam<'system'> = {
         role: 'system',
         content:
-          "You are a therapeutic chat bot called Calmi with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points."
+          'You are a therapeutic chat bot called Calmi with expertise in Cognitive Behavioural Therapy. Respond with empathy and give advice based on cognitive behavioural therapy. Do not respond with numerical lists or bullet points.'
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
@@ -279,9 +279,9 @@ function Chat() {
             </div> */}
 
             <div className='chat-bubble bg-info text-primary flex gap-2'>
-              <div className='bg-slate-600 p-2 delay-75  w-px h-px rounded-full animate-bounce'></div>
-              <div className='bg-slate-600 p-2 delay-300 w-px h-px rounded-full animate-bounce'></div>
-              <div className='bg-slate-600 p-2 delay-700  w-px h-px rounded-full animate-bounce'></div>
+              <div className='bg-[#96968B] p-2 delay-75  w-px h-px rounded-full animate-bounce'></div>
+              <div className='bg-[#96968B] p-2 delay-300 w-px h-px rounded-full animate-bounce'></div>
+              <div className='bg-[#96968B] p-2 delay-700  w-px h-px rounded-full animate-bounce'></div>
             </div>
             {/* <div className='chat-footer opacity-50'>Delivered</div> */}
           </div>
