@@ -70,7 +70,6 @@ function Chat() {
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
       const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
-
       if (lastMessage) {
         setProgress({
           token: lastMessage.token!,
@@ -171,6 +170,10 @@ function Chat() {
       // end of the chat
       if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
         setEndChat(true)
+        setProgress({
+          token: 'END',
+          subtoken: 0
+        })
         postprocess(user.uid, chatID, newMessage, true, messages)
       }
 

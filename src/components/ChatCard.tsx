@@ -1,10 +1,14 @@
 'use client'
 
-import { deleteChatFromFirestore } from '@/services/firebase/firestore'
+import {
+  deleteChatFromFirestore,
+  updateChat
+} from '@/services/firebase/firestore'
 import { Timestamp } from 'firebase/firestore'
 import Link from 'next/link'
 import { useUser } from './UserProvider'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 const customButton =
   'border border-primary rounded px-4 bg-secondary hover:bg-primary hover:text-secondary font-semibold'
@@ -20,6 +24,8 @@ function ChatCard({
 }) {
   const user = useUser()
   const [expanded, setExpanded] = useState(false)
+  const [editable, setEditable] = useState(false)
+  const reframeRef = useRef<HTMLParagraphElement>(null)
   if (!user) return null
   if (user === 'loading') return null
   const uid = user?.uid
@@ -50,13 +56,57 @@ function ChatCard({
       </p>
       {!(page === 'history') && chat.reframedThoughts && (
         <>
-          <p
-            className={`font-semibold text-xl ${
-              !expanded ? 'line-clamp-2' : ''
-            }`}
-          >
-            {chat.reframedThoughts}
-          </p>
+          <div className='group relative'>
+            <p
+              ref={reframeRef}
+              className={`font-semibold text-xl ${
+                !expanded ? 'line-clamp-2' : ''
+              }`}
+              contentEditable={editable}
+              // after the user is done editing the text, update the chat in firestore
+              onBlur={async (e) => {
+                updateChat(uid, chat.id, {
+                  reframedThoughts: e.currentTarget.innerText
+                })
+                toast.success('Saved!')
+                setEditable(false)
+              }}
+              suppressContentEditableWarning={true}
+            >
+              {chat.reframedThoughts}
+            </p>
+            <button
+              onClick={
+                // if the user is not editing the text, allow them to edit it
+                (e) => {
+                  setEditable((p) => !p)
+                  e.stopPropagation()
+                  setTimeout(() => {
+                    reframeRef.current?.focus()
+                  }, 100)
+                }
+              }
+              className={`absolute top-0 right-0 ${editable ? 'hidden' : ''}`}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='border border-primary rounded-full p-1 absolute top-0 right-0 text-primary group-hover:text-secondary group-hover:bg-primary opacity-0 group-hover:opacity-100 scale-0 group-hover:scale-100  transition-all duration-300'
+              >
+                <path d='M12 20h9' />
+                <path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z' />
+                <path d='m15 5 3 3' />
+              </svg>
+            </button>
+          </div>
+
           <p className='mt-2'>Automatic Thoughts:</p>
           <p className={!expanded ? 'line-clamp-2' : ''}>
             {chat.distortedThoughts}

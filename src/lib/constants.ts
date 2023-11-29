@@ -24,9 +24,11 @@ const CHATSTAGES: TOKENS[] = [
   'START',
   'introduction',
   'rapportBuilding',
-  'atExplanation',
   'atDistortion',
+  'atExplanation',
+  'ClarifySituation',
   'ExplainLoop',
+  'findNeed',
   'crExercise',
   'identifyDistortion',
   'END'
