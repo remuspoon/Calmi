@@ -16,8 +16,8 @@ const inter = Varela_Round({
 })
 
 export const metadata: Metadata = {
-  title: 'CBT Chat',
-  description: 'Chat with your ai bot when you are feeling down'
+  title: 'Calmi',
+  description: 'Your pocket mental health chatbot!'
 }
 
 export default function RootLayout({
