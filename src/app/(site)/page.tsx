@@ -9,7 +9,7 @@ export default function Home() {
       </p>
       <p className='w-3/4 mx-auto sm:text-lg text-primary font-semibold'>
         Discover the power of Cognitive Behavioral Therapy (CBT) with our
-        interactive chatbot. Our CBTChat Bot is designed to guide you through
+        interactive chatbot. Calmi is designed to guide you through
         evidence-based techniques that can help improve your mental well-being
         and promote positive change.
       </p>
