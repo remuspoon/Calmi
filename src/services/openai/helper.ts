@@ -7,7 +7,7 @@ export const isSuicidal = async (text: string) => {
   const prompt = `Does this response suggest the person is suicidal, harmful to themselves or others, or in immediate risk of danger: ${text} \nAnswer either 'yes' or 'no'`
 
   const result = await openai.completions.create({
-    model: 'text-davinci-002',
+    model: 'gpt-3.5-turbo-instruct',
     prompt,
     temperature: 0
   })
@@ -47,7 +47,7 @@ export const userAffirmed = async (text: string | [string, string]) => {
   }
 
   const result = await openai.completions.create({
-    model: 'text-davinci-002',
+    model: 'gpt-3.5-turbo-instruct',
     prompt,
     temperature: 0
   })
