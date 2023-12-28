@@ -335,9 +335,9 @@ function Chat() {
         >
           Send
         </button>
-        <button className='btn ml-2 btn-outline btn-sm' onClick={handlePrint}>
+        {/* <button className='btn ml-2 btn-outline btn-sm' onClick={handlePrint}>
           print
-        </button>
+        </button> */}
       </form>
     </div>
   )
