@@ -111,7 +111,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${userName}! I'm Calmi, I am a Cognitive Behavourial Therapy (CBT) chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ${userName}! I'm Calmi, I am a chatbot designed to help you with your mental health problems! What's on your mind today?`
       }
       setMessages([systemMessage, welcomeMessage])
 
@@ -335,9 +335,9 @@ function Chat() {
         >
           Send
         </button>
-        {/* <button className='btn ml-2 btn-outline btn-sm' onClick={handlePrint}>
+        <button className='btn ml-2 btn-outline btn-sm' onClick={handlePrint}>
           print
-        </button> */}
+        </button>
       </form>
     </div>
   )

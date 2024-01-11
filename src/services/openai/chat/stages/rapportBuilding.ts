@@ -42,7 +42,7 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "In 4 sentences or less, Empathize with the user's feelings and situation without repeating it word for word. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
+        "In 4 sentences or less, rephrase the user's situation in second person perspective. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
       )
   },
 
@@ -58,10 +58,10 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        "In second person perspective, summarise the user's situation and feelings by highlighting the key ideas and the problems they're facing. Finish by asking the user if they think your judgement is correct."
+      "In second person perspective, summarise the user's situation and feelings by highlighting the key ideas and the problems they're facing. Finish by asking the user if they think your judgement is correct."
       )) as string
 
-      const res = staticResponse(['I think I understand now.', gptResponse])()
+      const res = staticResponse([gptResponse])()
       return res
     },
 
@@ -70,7 +70,7 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
       const userAffirm = await userAffirmed(params)
 
       if (userAffirm) {
-        return { token: 'rapportBuilding', subtoken: 3 }
+        return { token: 'atDistortion'}
       } else {
         return { token: 'ClarifySituation' }
       }

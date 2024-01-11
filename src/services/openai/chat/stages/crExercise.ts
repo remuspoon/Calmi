@@ -8,7 +8,7 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "Based on the user's automatic thoughts, ask the user one question that challenges their cognitive distortion."
+        "Based on the user's response, ask the user one question that challenges their cognitive distortion."
       )
   },
 
@@ -16,7 +16,7 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion.'
+        'Respond to the user in less than three sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion.'
       )
   },
 
@@ -24,7 +24,7 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to the user in less than two sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion.'
+        'Respond to the user in less than three sentences. Afterwards, build upon the argument by asking another question that challenges the cognitive distortion.'
       )
   },
 
@@ -34,15 +34,16 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        "Fill in this statement: [As we can see, your thought that {insert user's automatic thought} is distorted.]"
+        "Respond to the user. Within four sentences, tell the user 'I want you to write a statement or a goal that will help you achieve your ideal outcomes.'"
       )) as string
 
       const res = staticResponse([
-        gptResponse,
-        'Based on your answers above, I want you to create a new thought or an alternative response to your situation that allows you to move forward and achieve your ideal outcome.',
-        "For example, an alternate response to a thought such as 'I cannot commit to a goal I set.' Can be something like:",
-        "'Just because I've struggled with some goals in the past doesn't mean I can't commit or succeed in the future. Everyone has setbacks. I can learn from my past experiences, adjust my approach, and keep trying.'",
-        'Your new response should recognize past difficulties but also emphasizes growth, learning, and the potential for future success. Now you try!'
+        gptResponse
+        // ,
+        // 'Based on your answers above, I want you to create a new thought or an alternative response to your situation that allows you to move forward and achieve your ideal outcome.',
+        // "For example, an alternate response to a thought such as 'I cannot commit to a goal I set.' Can be something like:",
+        // "'Just because I've struggled with some goals in the past doesn't mean I can't commit or succeed in the future. Everyone has setbacks. I can learn from my past experiences, adjust my approach, and keep trying.'",
+        // 'Your new response should recognize past difficulties but also emphasizes growth, learning, and the potential for future success. Now you try!'
       ])()
       return res
     }

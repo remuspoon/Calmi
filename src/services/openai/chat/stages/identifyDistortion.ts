@@ -7,7 +7,7 @@ const IDENTIFY_DISTORTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'In two sentences or less, ask the user to elaborate on why they disagree.'
+        'In 3 sentences, respond to the user and ask the user to elaborate on why they disagree.'
       )
   },
 
