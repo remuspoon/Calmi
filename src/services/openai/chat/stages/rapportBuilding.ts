@@ -42,7 +42,7 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "In 4 sentences or less, rephrase the user's situation in second person perspective. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
+        "In 4 sentences or less, rephrase the user's situation in second person perspective and tell them its understandable to be feeling this way. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
       )
   },
 
@@ -50,7 +50,7 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "In 2 sentences, ask one question to gather more information on the user's situation. Do not repeat questions asked before."
+        "In 2 sentences, express sympathy and ask one question to gather more information on the user's situation. Do not repeat questions asked before."
       )
   },
 

@@ -11,7 +11,9 @@ export default function Home() {
         Discover the power of our mental health chat bot! Calmi is designed to guide you through
         evidence-based techniques that can help improve your mental well-being
         and promote positive change.
-        All your data is securely encrypted before storage, ensuring your conversations remain confidential and protected.
+        <div><em>**If you are in a serious mental health crisis or state, please do not use Calmi and seek help from qualified healthcare professionals.**</em></div>
+        <div style={{ fontSize: '.8em', color: 'grey'}}>All your data is securely encrypted before storage, ensuring your conversations are only accessible by yourself.</div>
+        
       </p>
       <div className='flex gap-2 mt-4'>
         <ChatButton label="Let's Chat" />

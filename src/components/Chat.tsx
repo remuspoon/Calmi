@@ -111,7 +111,7 @@ function Chat() {
       }
       const welcomeMessage: ChatCompletionMessageParam<'assistant'> = {
         role: 'assistant',
-        content: `Hey ${userName}! I'm Calmi, I am a chatbot designed to help you with your mental health problems! What's on your mind today?`
+        content: `Hey ${userName}! I'm Calmi, I'm here to help you with your mental health. Take a second to think about what is or has been upsetting you, and when you're ready you can tell me all about it. I'm here for you and lets work through this together :)`
       }
       setMessages([systemMessage, welcomeMessage])
 
