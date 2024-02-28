@@ -27,7 +27,7 @@ async function ChatPage({
   const postchatSurvey =
     surveys.find((s) => s.title === 'postChatSurvey')?.questions || []
   return (
-    <div className='flex flex-col container mx-auto min-h-screen'>
+    <div className='flex flex-col container mx-auto min-h-[87vh]'>
       <ChatProgress />
       {/* <Steps currentStep={currentStep ?? 3} chatID={params?.chatID} /> */}
       {/* {currentStep === 0 && <Survey Questions={prechatSurvey} />} */}
