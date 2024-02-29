@@ -15,7 +15,7 @@ const IDENTIFY_DISTORTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'In 5 sentences or less, suggest another cognitive distortion that applies to the user based on their responses. Next, explain how the user is showing this cognitive distortion. Finish by asking the user if they think your judgement is correct.'
+        "In 5 sentences or less, suggest to them how they are showing a cognitive distortion based on their responses. Next, explain in detail how this cognitive distortion applies to them and why its affecting them negatively. Finish by asking them if they think your judgement is correct."
       ),
 
     next: async (messages) => {

@@ -42,7 +42,15 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "In 4 sentences or less, rephrase the user's situation in second person perspective and tell them its understandable to be feeling this way. Do not offer solutions. Afterwards, ask one question to gather more information on the user's situation."
+        "tell them you understand and then write a question that asks them to clarify their situation. Do not repeat questions asked before."
+      )
+  },
+  
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        "Remind them that its okay to feel a range of emotions. Tell them they should acknowledge their feelings and it's okay to feel the way they feel. Ask them to tell you what emotions they're feeling."
       )
   },
 
@@ -50,15 +58,46 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "In 2 sentences, express sympathy and ask one question to gather more information on the user's situation. Do not repeat questions asked before."
+        "in one sentence, only write a question that asks them how their emotions have been impacting them"
       )
   },
+  
+  {
+    response: async (messages) => {
+      const gptResponse = (await chatCompletions(
+        messages,
+        "In 2 sentence, tell them why it's okay that they feel the way they feel."
+      )) as string
+
+      const res = staticResponse([
+        gptResponse
+      ])()
+      return res
+    }
+  },
+
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        "in one sentence, only write a question that asks them how they have been dealing with the emotions they're feeling."
+      )
+  },
+
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        "Respond to the user, then tell them you understand what they're going through and ask them one question to gather more information on the user's situation. Do not repeat questions asked before."
+      )
+  },
+  
 
   {
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-      "In second person perspective, summarise the user's situation and feelings by highlighting the key ideas and the problems they're facing. Finish by asking the user if they think your judgement is correct."
+      "In 5 sentences: Tell them you understand them and you're here for them. Summarise their situation and emotions by highlighting the key ideas and the problems they're facing. Finish by asking them if they think your judgement is correct."
       )) as string
 
       const res = staticResponse([gptResponse])()
@@ -77,43 +116,43 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     }
   },
 
-  {
-    response: async (messages) => {
-      const gptResponse = (await chatCompletions(
-        messages,
-        "In less than 3 sentences, ask the user if they want to try a 'Cognitive Restructuring' exercise to help their feelings and situation."
-      )) as string
-      const res = staticResponse([gptResponse])()
-      return res
-    },
+//   {
+//     response: async (messages) => {
+//       const gptResponse = (await chatCompletions(
+//         messages,
+//         "In less than 3 sentences, ask the user if they want to try a 'Cognitive Restructuring' exercise to help their feelings and situation."
+//       )) as string
+//       const res = staticResponse([gptResponse])()
+//       return res
+//     },
 
-    next: async (messages) => {
-      const params = lastbotanduser(messages as any)
-      const userAffirm = await userAffirmed(params)
+//     next: async (messages) => {
+//       const params = lastbotanduser(messages as any)
+//       const userAffirm = await userAffirmed(params)
 
-      if (userAffirm) {
-        return { token: 'rapportBuilding', subtoken: 4 }
-      } else {
-        return { token: 'findNeed' }
-      }
-    }
-  },
+//       if (userAffirm) {
+//         return { token: 'rapportBuilding', subtoken: 4 }
+//       } else {
+//         return { token: 'findNeed' }
+//       }
+//     }
+//   },
 
-  {
-    response: staticResponse(
-      "Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive. Do you know what is an Automatic Thought in CBT?"
-    ),
-    next: async (messages) => {
-      const params = lastbotanduser(messages as any)
-      const userAffirm = await userAffirmed(params)
+//   {
+//     response: staticResponse(
+//       "Great! In this exercise, we are going to identify your distorted 'Automatic thoughts'; and rethink them into something more constructive. Do you know what is an Automatic Thought in CBT?"
+//     ),
+//     next: async (messages) => {
+//       const params = lastbotanduser(messages as any)
+//       const userAffirm = await userAffirmed(params)
 
-      if (userAffirm) {
-        return { token: 'atDistortion' }
-      } else {
-        return { token: 'atExplanation' }
-      }
-    }
-  }
+//       if (userAffirm) {
+//         return { token: 'atDistortion' }
+//       } else {
+//         return { token: 'atExplanation' }
+//       }
+//     }
+//   }
 ]
 
 export default RAPPORT_BUILDING

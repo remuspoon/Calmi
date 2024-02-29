@@ -4,6 +4,14 @@ import { chatCompletions } from '../..'
 
 const EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   {
+    response: async (messages) =>
+      chatCompletions(
+        messages,
+        "Emotionally support the user. State that you're here for them and you want to help them"
+      )
+  },
+
+  {
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
@@ -35,7 +43,7 @@ const EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        "In 5 sentences or less, suggest one cognitive distortion that applies to the user based on their thoughts. Next, explain what cognitive distortion is. State that this cognitive distortion might be preventing user's ideal situation from happening. Then, explain how the user is showing this cognitive distortion. Finish by asking the user if they think your judgement is correct."
+        "In 5 sentences or less, suggest one cognitive distortion that applies to them based on their thoughts. Next, explain what this cognitive distortion is. Explain in detail how they are exhibiting this cognitive distortion. Explain how this cognitive distortion may be negatively affecting them. Finish by asking them if they think your judgement is correct."
       )) as string
 
       const res = staticResponse([

@@ -49,11 +49,27 @@ export const userAffirmed = async (text: string | [string, string]) => {
   const result = await openai.completions.create({
     model: 'gpt-3.5-turbo-instruct',
     prompt,
-    temperature: 0
+    temperature: 0.1
   })
 
   const response = result.choices[0].text
-  return response.toLowerCase().includes('yes')
+  return response.toLowerCase().includes('yes') || response.toLowerCase().includes('affirmative')
+}
+
+export const isNotQuestion = async (text: string | [string, string]) => {
+  let prompt = `Is the user's response a question: ${text} \nAnswer either 'yes' or 'no'`
+  if (Array.isArray(text)) {
+    prompt = `Is the user's response " ${text[1]}" a question?\nAnswer either 'yes' or 'no'`
+  }
+
+  const result = await openai.completions.create({
+    model: 'gpt-3.5-turbo-instruct',
+    prompt,
+    temperature: 0.1
+  })
+
+  const response = result.choices[0].text
+  return response.toLowerCase().includes('no')
 }
 
 export const staticResponse = (content: string | string[]) => () =>

@@ -8,7 +8,7 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "Empathize with the user's feelings and situation. Then ask the user to clarify on the situation that is troubling them."
+        "in 1 sentence, respond and ask them to clarify what's going on"
       ),
       
     next: async (messages) => {
