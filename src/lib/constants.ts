@@ -21,17 +21,17 @@ export const TERMINATING_MESSAGE = 'End'
 // ]
 
 const CHATSTAGES: TOKENS[] = [
-  'START',
   'introduction',
   'rapportBuilding',
-  'atDistortion',
-  'atExplanation',
-  'ClarifySituation',
-  'ExplainLoop',
-  'findNeed',
-  'crExercise',
+  'rapportBuildingPath1',
+  'rapportBuildingPath2',
+  'rapportBuildingPath3',
+  'reframeExercise',
   'identifyDistortion',
-  'END'
+  'clarifyDistortion',
+  'clarification',
+  'END',
+  'START',
 ]
 
 export const calculateChatProgress = (token: TOKENS) => {

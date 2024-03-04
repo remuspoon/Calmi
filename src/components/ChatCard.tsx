@@ -10,7 +10,7 @@ import { useUser } from './UserProvider'
 import { useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const customButton =
+const viewMoreLessBtn =
   'border border-primary rounded px-4 bg-secondary hover:bg-primary hover:text-secondary font-semibold'
 
 function ChatCard({
@@ -37,7 +37,7 @@ function ChatCard({
   }
 
   return (
-    <div className='grid grid-cols-1 gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl w-full border border-black'>
+    <div className='grid grid-cols-1 gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl w-full border border-black py-9'>
       <h1 className='font-semibold mr-4'>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()
@@ -122,7 +122,7 @@ function ChatCard({
       {chat.completed && !(page === 'history') && (
         <button
           className={
-            'absolute bottom-2 right-2 shadow-md shadow-primary ' + customButton
+            'absolute bottom-2 right-2 ' + viewMoreLessBtn
           }
           onClick={() => setExpanded((p) => !p)}
         >
@@ -158,7 +158,7 @@ function ChatCard({
       {/* View Chat button */}
 
       <div className='flex gap-2 justify-center'>
-        <Link href={`/chat/${chat.id}?currentStep=1`} className={customButton}>
+        <Link href={`/chat/${chat.id}?currentStep=1`} className={`${!expanded ? "hidden" : "border border-primary rounded px-4 bg-secondary hover:bg-primary hover:text-secondary font-semibold"} `} >
           View chat
         </Link>
       </div>

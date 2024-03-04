@@ -1,6 +1,6 @@
-import { RESPONSE_TYPE } from '..'
-import { chatCompletions } from '../..'
-import { lastbotanduser, staticResponse, userAffirmed } from '../../helper'
+import { RESPONSE_TYPE } from '../../..'
+import { chatCompletions } from '../../../..'
+import { lastbotanduser, staticResponse, userAffirmed } from '../../../../helper'
 
 
 const CLARIFY_SITUATION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
@@ -27,7 +27,7 @@ const CLARIFY_SITUATION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
         if (userAffirm) {
           return { token: 'rapportBuilding', subtoken: 3}
         } else {
-          return { token: 'ClarifySituation' }
+          return { token: 'clarification' }
         }
       }
     },

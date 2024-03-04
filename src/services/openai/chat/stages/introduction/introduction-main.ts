@@ -1,7 +1,7 @@
 import { TERMINATING_MESSAGE } from '@/lib/constants'
-import { ChatCompletionMessageParam, RESPONSE_TYPE } from '..'
-import { chatCompletions } from '../..'
-import { isSuicidal } from '../../helper'
+import { ChatCompletionMessageParam, RESPONSE_TYPE } from '../..'
+import { chatCompletions } from '../../..'
+import { isSuicidal } from '../../../helper'
 
 const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   {

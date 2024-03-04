@@ -8,6 +8,7 @@ import MyChatButton from '@/components/MyChatButton'
 import NextTopLoader from 'nextjs-toploader'
 import { Toaster } from 'react-hot-toast'
 import MyAccount from '@/components/MyAccount'
+import CalmiLogo from '../../../public/CalmiLogo.png'
 
 const inter = Varela_Round({
   display: 'swap',
@@ -37,8 +38,8 @@ export default function RootLayout({
         <NextTopLoader />
         <UserProvider>
           <nav className='sticky z-10 backdrop-blur top-0 w-full flex items-center gap-2 px-5 py-3 print:hidden bg-primary'>
-            <Link href={'/'} className='flex gap-2'>
-              <h1 className='font-bold text-2xl text-[#FDFEEB]'>CALMI</h1>
+            <Link href={'/'} className='flex items-center'>
+              <h1 className='font-bold text-2xl text-[#D5DCE5] '>CALMI</h1><img src={CalmiLogo.src} alt="Logo" className='w-[3rem]'/>
             </Link>
             <div className='ml-auto flex gap-2 items-center'>
               <MyChatButton label='My Journal' href='/myjournal' />

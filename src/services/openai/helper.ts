@@ -41,31 +41,31 @@ export const lastbotanduser = (
  * 2: the affirming eg: the user
  */
 export const userAffirmed = async (text: string | [string, string]) => {
-  let prompt = `Is the user response affirmative: ${text} \nAnswer either 'yes' or 'no'`
+  let prompt = `Is the user's response affirmative: ${text} \nAnswer only 'yes' or 'no'`
   if (Array.isArray(text)) {
-    prompt = `Is the user response " ${text[1]}" affirmative to ${text[0]} \nAnswer either 'yes' or 'no'`
+    prompt = `Is the user's response "${text[1]}" affirmative to the system's response "${text[0]}" \nAnswer only 'yes' or 'no'`
   }
 
   const result = await openai.completions.create({
     model: 'gpt-3.5-turbo-instruct',
     prompt,
-    temperature: 0.1
+    temperature: 0
   })
 
   const response = result.choices[0].text
-  return response.toLowerCase().includes('yes') || response.toLowerCase().includes('affirmative')
+  return response.toLowerCase().includes('yes')
 }
 
 export const isNotQuestion = async (text: string | [string, string]) => {
-  let prompt = `Is the user's response a question: ${text} \nAnswer either 'yes' or 'no'`
+  let prompt = `Is the user's response a question: ${text} \nAnswer only 'yes' or 'no'`
   if (Array.isArray(text)) {
-    prompt = `Is the user's response " ${text[1]}" a question?\nAnswer either 'yes' or 'no'`
+    prompt = `Is the user's response "${text[1]}" a question to this passage "${text[0]}"\nAnswer only 'yes' or 'no'`
   }
 
   const result = await openai.completions.create({
     model: 'gpt-3.5-turbo-instruct',
     prompt,
-    temperature: 0.1
+    temperature: 0
   })
 
   const response = result.choices[0].text

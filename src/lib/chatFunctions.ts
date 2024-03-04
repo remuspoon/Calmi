@@ -70,11 +70,11 @@ export const postprocess = async (
   if (!latestUserMessage) return
 
   const distortedThoughts =
-    latestUserMessage.token === 'atDistortion' &&
+    latestUserMessage.token === 'identifyDistortion' &&
     latestUserMessage.subtoken === 1
 
   const reframedThoughts =
-    latestUserMessage.token === 'crExercise' && latestUserMessage.subtoken === 5
+    latestUserMessage.token === 'reframeExercise' && latestUserMessage.subtoken === 5
 
   if (distortedThoughts) {
     let gptRephrased = await fetch('/chat/api/reframedThought', {

@@ -3,15 +3,16 @@ import 'server-only'
 import { chatCompletions } from '../'
 import { isSuicidal } from '../helper'
 import { TERMINATING_MESSAGE } from '@/lib/constants'
-import INTRODUCTION from './stages/introduction'
-import RAPPORT_BUILDING from './stages/rapportBuilding'
-import AT_DISTORTION from './stages/atDistortion'
-import AT_EXPLANATION from './stages/atExplanation'
-import FIND_NEED from './stages/findNeed'
-import CR_EXERCISE from './stages/crExercise'
-import IDENTIFY_DISTORTION from './stages/identifyDistortion'
-import EXPLAIN_LOOP from './stages/ExplainLoop'
-import CLARIFY_SITUATION from './stages/ClarifySituation'
+import INTRODUCTION from './stages/introduction/introduction-main'
+import RAPPORT_BUILDING from './stages/rapportBuilding/rapportBuilding-main'
+import RAPPORT_BUILDING_PATH_1 from './stages/rapportBuilding/rapportBuilding-paths/rapportBuildingPath1'
+import RAPPORT_BUILDING_PATH_2 from './stages/rapportBuilding/rapportBuilding-paths/rapportBuildingPath2'
+import RAPPORT_BUILDING_PATH_3 from './stages/rapportBuilding/rapportBuilding-paths/rapportBuildingPath3'
+import REFRAME_EXERCISE from './stages/reframeExercise/reframeExercise-main'
+import CLARIFY_DISTORTION from './stages/identifyDistortion/clarifyDistortion'
+import CLARIFY_SITUATION from './stages/rapportBuilding/rapportBuilding-paths/clarification'
+import IDENTIFY_DISTORTION from './stages/identifyDistortion/identifyDistortion-main'
+
 
 export type ChatCompletionMessageParam<
   T extends 'user' | 'assistant' | 'system'
@@ -23,16 +24,16 @@ export type ChatCompletionMessageParam<
 }
 export type TOKENS =
   | 'introduction'
+  | 'rapportBuilding'
+  | 'rapportBuildingPath1'
+  | 'rapportBuildingPath2'
+  | 'rapportBuildingPath3'
+  | 'reframeExercise'
+  | 'identifyDistortion'
+  | 'clarifyDistortion'
+  | 'clarification'
   | 'END'
   | 'START'
-  | 'rapportBuilding'
-  | 'atDistortion'
-  | 'atExplanation'
-  | 'findNeed'
-  | 'crExercise'
-  | 'identifyDistortion'
-  | 'ExplainLoop'
-  | 'ClarifySituation'
 export type RESPONSE_TYPE = {
   next?: (messages: ChatCompletionMessageParam<'user'>[] | string) =>
     | {
@@ -56,13 +57,14 @@ const RESPONSES_v1: Record<
 > = {
   introduction: INTRODUCTION,
   rapportBuilding: RAPPORT_BUILDING,
-  atDistortion: AT_DISTORTION,
-  atExplanation: AT_EXPLANATION,
-  findNeed: FIND_NEED,
-  crExercise: CR_EXERCISE,
+  rapportBuildingPath1: RAPPORT_BUILDING_PATH_1,  
+  rapportBuildingPath2: RAPPORT_BUILDING_PATH_2,
+  rapportBuildingPath3: RAPPORT_BUILDING_PATH_3,
   identifyDistortion: IDENTIFY_DISTORTION,
-  ExplainLoop: EXPLAIN_LOOP,
-  ClarifySituation: CLARIFY_SITUATION
+  clarifyDistortion: CLARIFY_DISTORTION,
+  reframeExercise: REFRAME_EXERCISE,
+
+  clarification: CLARIFY_SITUATION
 }
 
 const getGptResponse = async (

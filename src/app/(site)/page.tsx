@@ -8,11 +8,9 @@ export default function Home() {
         CALMI
       </p>
       <p className='w-3/4 mx-auto sm:text-lg text-primary font-semibold'>
-        Discover the power of our mental health chat bot! Calmi is designed to guide you through
-        evidence-based techniques that can help improve your mental well-being
-        and promote positive change.
-        <div><em>**If you are in a serious mental health crisis or state, please do not use Calmi and seek help from qualified healthcare professionals.**</em></div>
-        <div style={{ fontSize: '.8em', color: 'grey'}}>All your data is securely encrypted before storage, ensuring your conversations are only accessible by yourself.</div>
+        Hey I'm Calmi! I'm here to help you promote positive changes to your mental well-being with evidence-based techniques!
+        <div><em className="text-xs text-gray-600">**If you are in a serious mental health crisis or state, please do not use Calmi and seek help from qualified healthcare professionals.**</em></div>
+        <div className="text-xs text-gray-600">All your data is securely encrypted before storage, ensuring your conversations are only accessible by yourself.</div>
         
       </p>
       <div className='flex gap-2 mt-4'>

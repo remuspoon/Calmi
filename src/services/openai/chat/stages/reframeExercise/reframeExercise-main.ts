@@ -1,14 +1,14 @@
 import { TERMINATING_MESSAGE } from '@/lib/constants'
-import { RESPONSE_TYPE } from '..'
-import { chatCompletions } from '../..'
-import { staticResponse, userAffirmed, lastbotanduser, isNotQuestion } from '../../helper'
+import { RESPONSE_TYPE } from '../..'
+import { chatCompletions } from '../../..'
+import { staticResponse, userAffirmed, lastbotanduser, isNotQuestion } from '../../../helper'
 
-const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
+const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   {
     response: (messages) =>
       chatCompletions(
         messages,
-        "Based on the response, ask them one question that challenges their cognitive distortion."
+        "Based on the response, ask them one question that challenges their cognitive distortion. Also ask them how they think challenging their cognitive distortion will positively impact them."
       )
   },
 
@@ -16,7 +16,7 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to them in less than four sentences. State how the cognitive distortion negatively impacts them.'
+        'Respond to them in less than three sentences. Build upon the argument and suggest things they can do to challenge their cognitive distortion. Ask them if they agree with your suggestions.'
       )
   },
 
@@ -24,15 +24,16 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to them in less than four sentences. Build upon the argument and Suggest things they can do to challenge their cognitive distortion.'
+        'Respond to them with two sentences and a statement. Do not repeat things said before.'
       )
   },
+
 
   {
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to them in less than four sentences. Build upon the arguement and Ask them how they think challenging their cognitive distortion will positively impact them.'
+        'Respond to them in less than four sentences. Build upon the arguement by asking them another question'
       )
   },
 
@@ -40,7 +41,7 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-      "Respond to them in less than four sentences. Build upon the argument and state how the cognitive distortion negatively impacts them."
+      "Respond to them in less than four sentences. Suggest a healthier way to deal with their situation."
       )) as string
 
       const res = staticResponse([gptResponse])()
@@ -53,9 +54,9 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
       const userAffirm = await userAffirmed(params)
 
       if (notQuestion && userAffirm) {
-        return { token: 'crExercise', subtoken: 5}
+        return { token: 'reframeExercise', subtoken: 5}
       } else {
-        return { token: 'crExercise', subtoken: 2}
+        return { token: 'reframeExercise', subtoken: 2}
       }
     }
   },
@@ -105,4 +106,4 @@ const CR_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   }
 ]
 
-export default CR_EXERCISE
+export default REFRAME_EXERCISE

@@ -1,8 +1,8 @@
-import { RESPONSE_TYPE } from '..'
-import { staticResponse, userAffirmed, lastbotanduser } from '../../helper'
-import { chatCompletions } from '../..'
+import { RESPONSE_TYPE } from '../..'
+import { staticResponse, userAffirmed, lastbotanduser } from '../../../helper'
+import { chatCompletions } from '../../..'
 
-const EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
+const IDENTIFY_DISTORTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   {
     response: async (messages) =>
       chatCompletions(
@@ -57,12 +57,12 @@ const EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
       const userAffirm = await userAffirmed(params)
 
       if (userAffirm) {
-        return { token: 'crExercise' }
+        return { token: 'reframeExercise' }
       } else {
-        return { token: 'identifyDistortion' }
+        return { token: 'clarifyDistortion' }
       }
     }
   }
 ]
 
-export default EXERCISE
+export default IDENTIFY_DISTORTION
