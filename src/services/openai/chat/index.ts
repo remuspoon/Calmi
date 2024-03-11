@@ -12,6 +12,9 @@ import REFRAME_EXERCISE from './stages/reframeExercise/reframeExercise-main'
 import CLARIFY_DISTORTION from './stages/identifyDistortion/clarifyDistortion'
 import CLARIFY_SITUATION from './stages/rapportBuilding/rapportBuilding-paths/clarification'
 import IDENTIFY_DISTORTION from './stages/identifyDistortion/identifyDistortion-main'
+import VENTING from './stages/venting/venting-main'
+import VENTING_PATH_1 from './stages/venting/venting-paths/ventingPath1'
+import VENTING_PATH_2 from './stages/venting/venting-paths/ventingPath2'
 
 
 export type ChatCompletionMessageParam<
@@ -24,6 +27,9 @@ export type ChatCompletionMessageParam<
 }
 export type TOKENS =
   | 'introduction'
+  | 'venting'
+  | 'ventingPath1'
+  | 'ventingPath2'
   | 'rapportBuilding'
   | 'rapportBuildingPath1'
   | 'rapportBuildingPath2'
@@ -56,15 +62,17 @@ const RESPONSES_v1: Record<
   RESPONSE_TYPE | RESPONSE_TYPE[]
 > = {
   introduction: INTRODUCTION,
+  venting: VENTING,
+  ventingPath1: VENTING_PATH_1,
+  ventingPath2: VENTING_PATH_2,
   rapportBuilding: RAPPORT_BUILDING,
   rapportBuildingPath1: RAPPORT_BUILDING_PATH_1,  
   rapportBuildingPath2: RAPPORT_BUILDING_PATH_2,
-  rapportBuildingPath3: RAPPORT_BUILDING_PATH_3,
+  rapportBuildingPath3: RAPPORT_BUILDING_PATH_3,  
+  clarification: CLARIFY_SITUATION,
   identifyDistortion: IDENTIFY_DISTORTION,
   clarifyDistortion: CLARIFY_DISTORTION,
   reframeExercise: REFRAME_EXERCISE,
-
-  clarification: CLARIFY_SITUATION
 }
 
 const getGptResponse = async (

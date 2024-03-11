@@ -1,32 +1,39 @@
 import { TERMINATING_MESSAGE } from '@/lib/constants'
 import { ChatCompletionMessageParam, RESPONSE_TYPE } from '../..'
 import { chatCompletions } from '../../..'
-import { isSuicidal } from '../../../helper'
+import { isSuicidal, staticResponse, lastbotanduser, ventOrAdvice } from '../../../helper'
 
 const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
   {
     response: (messages) =>
       chatCompletions(
         messages,
-        "in 1 sentence, respond and ask them to clarify what's going on"
-      ),
-      
-    next: async (messages) => {
-      const suicidal = await isSuicidal(
-        (messages as Array<ChatCompletionMessageParam<'user'>>).findLast(
-          (m) => m.role === 'user'
-        )?.content || ''
+        "in 2 sentence, respond and ask them to clarify what's going on"
       )
-      if (suicidal) {
-        const reply =
-          "I'm really sorry to hear that but I am unable to provide the help that you need. Please seek professional help or reach out to someone you trust for support."
+  },
 
-        return { token: 'END', with: [reply, TERMINATING_MESSAGE] }
+  {
+    response: async (messages) => {
+      const gptResponse = (await chatCompletions(
+        messages,
+      "In 3 sentences, tell them you feel sorry for them. Finish by asking them whether they would just like to vent about it or if they want to try a therapy exercise?"
+      )) as string
+
+      const res = staticResponse([gptResponse])()
+      return res
+    },
+
+    next: async (messages) => {
+      const params = lastbotanduser(messages as any)
+      const userWantsToVent = await ventOrAdvice(params)
+
+      if (userWantsToVent) {
+        return { token: 'venting'}
       } else {
         return { token: 'rapportBuilding'}
       }
     }
-  }
+  },
 ]
 
 export default INTRODUCTION

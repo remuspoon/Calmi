@@ -25,7 +25,7 @@ const CLARIFY_SITUATION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
         const userAffirm = await userAffirmed(params)
   
         if (userAffirm) {
-          return { token: 'rapportBuilding', subtoken: 3}
+          return { token: 'identifyDistortion'}
         } else {
           return { token: 'clarification' }
         }

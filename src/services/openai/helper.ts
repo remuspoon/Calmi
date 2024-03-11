@@ -53,6 +53,7 @@ export const userAffirmed = async (text: string | [string, string]) => {
   })
 
   const response = result.choices[0].text
+  console.log(response);
   return response.toLowerCase().includes('yes')
 }
 
@@ -68,8 +69,29 @@ export const isNotQuestion = async (text: string | [string, string]) => {
     temperature: 0
   })
 
+  
   const response = result.choices[0].text
+  console.log(response);
   return response.toLowerCase().includes('no')
+}
+
+export const ventOrAdvice = async (text: string | [string, string]) => {
+  let prompt = `Does the user want to vent or are they looking for therapy exercise: "${text}" \nOnly answer 'vent' or 'therapy exercise'`
+  if (Array.isArray(text)) {
+    prompt = `Based on the user's response "${text[1]}" to this question "${text[0]}", does the user want to vent or are they looking for therapy exercise?  \nOnly answer 'vent' or 'therapy exercise'`
+  }
+
+  const result = await openai.completions.create({
+    model: 'gpt-3.5-turbo-instruct',
+    prompt,
+    temperature: 0.7,
+    max_tokens: 50
+
+  })
+
+  const response = result.choices[0].text
+  console.log(response);
+  return response.toLowerCase().includes('vent');
 }
 
 export const staticResponse = (content: string | string[]) => () =>

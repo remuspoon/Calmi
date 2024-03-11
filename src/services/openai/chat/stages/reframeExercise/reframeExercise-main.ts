@@ -16,24 +16,23 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to them in less than three sentences. Build upon the argument and suggest things they can do to challenge their cognitive distortion. Ask them if they agree with your suggestions.'
-      )
-  },
-
-  {
-    response: (messages) =>
-      chatCompletions(
-        messages,
-        'Respond to them with two sentences and a statement. Do not repeat things said before.'
-      )
-  },
-
-
-  {
-    response: (messages) =>
-      chatCompletions(
-        messages,
         'Respond to them in less than four sentences. Build upon the arguement by asking them another question'
+      )
+  },
+
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        'In two sentences, respond in a way that is relevant and helpful. Do not repeat things said before. Do not suggest them to speak to other people or professional help or therapist.'
+      )
+  },
+
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        'In three sentences, respond and Offer some constructive advice to help the user. Do not suggest them to speak to other people or professional help or therapist. Finish by asking them if they agree with your suggestions.'
       )
   },
 
@@ -41,7 +40,7 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-      "Respond to them in less than four sentences. Suggest a healthier way to deal with their situation."
+        'In 4 sentences, respond in a way that is relevant and helpful and concluding. Do not suggest them to speak to other people or professional help or therapist.'
       )) as string
 
       const res = staticResponse([gptResponse])()
