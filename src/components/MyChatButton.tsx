@@ -27,7 +27,7 @@ function MyChatButton({
   return (
     <Link
       href={href || '/chat?uid=' + user?.uid}
-      className={className || 'btn-sm sm:btn-md btn btn-info btn-outline'}
+      className={className || 'btn-sm sm:btn-md btn btn-primary btn-outline '}
     >
       {label || 'Chat History'}
     </Link>

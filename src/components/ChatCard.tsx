@@ -38,7 +38,7 @@ function ChatCard({
 
   return (
     <div className='grid grid-cols-1 gap-2 bg-secondary rounded-md px-6 p-2 basis-96 relative mx-auto shrink-0 max-w-2xl w-full border border-black py-9'>
-      <h1 className='font-semibold mr-4'>
+      <h1 className='font-semibold mr-4 hover:underline'><a href={`/chat/${chat.id}?currentStep=1`}>
         {new Timestamp(chat.timeStamp.seconds, chat.timeStamp.nanoseconds)
           .toDate()
           .toLocaleString(undefined, {
@@ -46,6 +46,7 @@ function ChatCard({
             day: 'numeric',
             year: 'numeric'
           })}
+          </a>
       </h1>
       <p>
         {!chat.completed && page === 'history'

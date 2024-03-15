@@ -23,17 +23,17 @@ const config: Config = {
     themes: [
       {
         mytheme: {
-          primary: '#002E65',
+          primary: '#004798',
 
-          secondary: '#FFFFEB',
+          secondary: '#D7EAFF',
 
           accent: '#EDD6BF',
 
-          neutral: '#4E3C32',
+          neutral: '#D7EAFF',
 
-          'base-100': '#AAB9CC',
+          'base-100': '#FFFFFF',
 
-          info: '#D5DCE5',
+          info: '#FFFFFF',
 
           success: '#00ffff',
 
