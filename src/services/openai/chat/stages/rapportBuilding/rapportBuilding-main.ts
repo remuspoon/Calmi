@@ -11,7 +11,7 @@ const RAPPORT_BUILDING: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-      "In 3 sentences, state that you understand and state you would like to know a bit more about the situation. Ask them to tell you more about it."
+      "In 3 sentences, state you would like to know a bit more about the situation. Ask them to tell you more about it."
       )) as string
 
       const res = staticResponse([gptResponse])()

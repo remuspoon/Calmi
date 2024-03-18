@@ -9,7 +9,7 @@ const RAPPORT_BUILDING_PATH_2: RESPONSE_TYPE | RESPONSE_TYPE[] = [
         response: (messages) =>
           chatCompletions(
             messages,
-            "In 3 sentences, get more information on the situation and ask them how the situation has been impacting them."
+            "In 3 sentences, get more information on the situation and ask them how the situation has been impacting them. Don't use the word 'understand', 'sounds, and 'normal'"
           )
       },
       

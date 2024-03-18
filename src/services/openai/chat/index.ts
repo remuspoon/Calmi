@@ -15,6 +15,7 @@ import IDENTIFY_DISTORTION from './stages/identifyDistortion/identifyDistortion-
 import VENTING from './stages/venting/venting-main'
 import VENTING_PATH_1 from './stages/venting/venting-paths/ventingPath1'
 import VENTING_PATH_2 from './stages/venting/venting-paths/ventingPath2'
+import EXPLAIN_DISTORTION from './stages/explainDistortion/explainDistortion-main'
 
 
 export type ChatCompletionMessageParam<
@@ -34,10 +35,11 @@ export type TOKENS =
   | 'rapportBuildingPath1'
   | 'rapportBuildingPath2'
   | 'rapportBuildingPath3'
-  | 'reframeExercise'
+  | 'clarification'
   | 'identifyDistortion'
   | 'clarifyDistortion'
-  | 'clarification'
+  | 'reframeExercise'
+  | 'explainDistortion'
   | 'END'
   | 'START'
 export type RESPONSE_TYPE = {
@@ -72,6 +74,7 @@ const RESPONSES_v1: Record<
   clarification: CLARIFY_SITUATION,
   identifyDistortion: IDENTIFY_DISTORTION,
   clarifyDistortion: CLARIFY_DISTORTION,
+  explainDistortion: EXPLAIN_DISTORTION,
   reframeExercise: REFRAME_EXERCISE,
 }
 

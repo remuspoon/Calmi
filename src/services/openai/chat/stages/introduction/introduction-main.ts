@@ -16,7 +16,7 @@ const INTRODUCTION: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-      "In 3 sentences, tell them you feel sorry for them. Finish by asking them whether they would just like to vent about it or if they want to try a therapy exercise?"
+      "In 3 sentences, tell them you feel sorry for them. Finish by asking them whether they would just like to vent about it or if they want to try a therapy exercise? Say 'vent' and 'therapy exercise' specifically."
       )) as string
 
       const res = staticResponse([gptResponse])()

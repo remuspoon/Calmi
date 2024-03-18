@@ -8,7 +8,7 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "Based on the response, ask them one question that challenges their cognitive distortion. Also ask them how they think challenging their cognitive distortion will positively impact them."
+        "In 3 sentences, explain that we are going to explore the evidences that support and challenge their cognitive distortions, finish by asking them what evidences supports their cognitive distortion."
       )
   },
 
@@ -16,23 +16,7 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        'Respond to them in less than four sentences. Build upon the arguement by asking them another question'
-      )
-  },
-
-  {
-    response: (messages) =>
-      chatCompletions(
-        messages,
-        'In two sentences, respond in a way that is relevant and helpful. Do not repeat things said before. Do not suggest them to speak to other people or professional help or therapist.'
-      )
-  },
-
-  {
-    response: (messages) =>
-      chatCompletions(
-        messages,
-        'In three sentences, respond and Offer some constructive advice to help the user. Do not suggest them to speak to other people or professional help or therapist. Finish by asking them if they agree with your suggestions.'
+        "In 3 sentences, respond to them and ask them to what evidences may challenge their cognitive distortions."
       )
   },
 
@@ -40,7 +24,39 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        'In 4 sentences, respond in a way that is relevant and helpful and concluding. Do not suggest them to speak to other people or professional help or therapist.'
+        'In 3 sentences, Respond to them, and then acknowledging both the for and against evidence, offer a more balanced way they can interpret their situation. Finish by asking them if they would like some practical steps to help them achieve this balanced interpretation.'
+      )) as string
+
+      const res = staticResponse([gptResponse])()
+      return res
+    },
+
+    next: async (messages) => {
+      const params = lastbotanduser(messages as any)
+      const notQuestion = await isNotQuestion(params)
+      const userAffirm = await userAffirmed(params)
+
+      if (notQuestion && userAffirm) {
+        return { token: 'reframeExercise', subtoken: 3}
+      } else {
+        return { token: 'reframeExercise', subtoken: 4}
+      }
+    }
+  },
+
+  {
+    response: (messages) =>
+      chatCompletions(
+        messages,
+        "In 4 sentences, respond to them and give them on specific method with examples on how to achieve the balanced interpretation you suggested."
+      )
+  },
+
+  {
+    response: async (messages) => {
+      const gptResponse = (await chatCompletions(
+        messages,
+        'In 3 sentences, respond with a statement that is relevant and helpful. Do not suggest them to speak to other people or professional help or therapist. Do not repeat the things said before. If appropriate, you should elaborate/reinforce your ideas or encourage them by telling them that they are strong and you are proud of them.'
       )) as string
 
       const res = staticResponse([gptResponse])()
@@ -55,7 +71,7 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
       if (notQuestion && userAffirm) {
         return { token: 'reframeExercise', subtoken: 5}
       } else {
-        return { token: 'reframeExercise', subtoken: 2}
+        return { token: 'reframeExercise', subtoken: 4}
       }
     }
   },
@@ -66,7 +82,7 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        "Respond to the user. Within five sentences, tell the user 'I want you to write a statement or a goal that will help you achieve your ideal outcomes.' Then, give the user an example of a statement or goal that will challenge their cognitive distortion and help them achieve their ideal outcomes."
+        "Respond to them. Within four sentences, based on what was discussed, tell them 'I want you to come up with a statement which will help them come up with a better mindset'. Then, state an example of a statement or goal that will challenge their cognitive distortion and help them achieve their ideal outcomes."
       )) as string
 
       const res = staticResponse([
@@ -85,15 +101,66 @@ const REFRAME_EXERCISE: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: async (messages) => {
       const gptResponse = (await chatCompletions(
         messages,
-        "Fill in:[When we started out you were feeling {insert user feeling} because of your thought: {insert user's automatic thought}. You realised that it was not helping and replaced it with a new thought: {insert user's alternate response}."
+        "In 3 sentences, explain and state how they can use the new statement or goal to help and remind themselves to adopt a more balanced mindset when the negative thought arises, and how it will shift their thinking patterns over time. Finish by Telling them you're really proud of them for completing this exercise."
+      )) as string
+
+      const gptResponse2 = (await chatCompletions(
+        messages,
+        "In 1 sentence, only ask them if they would like you to elaborate on how to use the new statement or goal to help them to adopt a more balanced mindset."
+      )) as string
+      const res = staticResponse([gptResponse, gptResponse2])()
+      return res
+    },
+
+    next: async (messages) => {
+      const params = lastbotanduser(messages as any)
+      const userAffirm = await userAffirmed(params)
+
+      if (userAffirm) {
+        return { token: 'reframeExercise', subtoken: 7}
+      } else {
+        return { token: 'reframeExercise', subtoken: 8}
+      }
+    }
+  },
+
+  {
+    response: async (messages) => {
+      const gptResponse = (await chatCompletions(
+        messages,
+        'In 3 sentences, elaborate how they should use the new thought to promote positive changes with a conclusive tone. Do not suggest them to speak to other people or professional help or therapist. Do not repeat the things said before.'
+      )) as string
+
+      const res = staticResponse([gptResponse])()
+      return res
+    },
+
+    next: async (messages) => {
+      const params = lastbotanduser(messages as any)
+      const notQuestion = await isNotQuestion(params)
+      const userAffirm = await userAffirmed(params)
+
+      if (notQuestion && userAffirm) {
+        return { token: 'reframeExercise', subtoken: 8}
+      } else {
+        return { token: 'reframeExercise', subtoken: 7}
+      }
+    }
+  },
+
+  {
+    response: async (messages) => {
+      const gptResponse = (await chatCompletions(
+        messages,
+        "In 3 sentences, congratulate them for finishing the exercise. state that you are really really proud of them, acknowledge that it takes a lot of courage to open up and remind them that they are strong and capable of overcoming their problems."
       )) as string
 
       const res = staticResponse([
         gptResponse,
 
-        'You challenged your thought based on a clearer perspective, and craft a balanced, realistic alternative response. Now, whenever the negative thought arises, go to "My Journal" and remind yourself of this alternative response. Over time, this practice will not only shift your thinking patterns but also positively influence your emotions and actions, leading to healthier responses to situations.',
+        'I have recorded your progress in the "My Journal" tab. You can access it anytime to review your progress and reflect on your journey.',
 
-        'Rethinking stuff sounds simple but is really difficult to do. You should feel proud of yourself for completing this exercise! Thank you for chatting with me and have a wonderful day!',
+        'Thank you for chatting with me and have a wonderful day!',
 
         TERMINATING_MESSAGE
       ])()

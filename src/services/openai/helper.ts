@@ -49,7 +49,8 @@ export const userAffirmed = async (text: string | [string, string]) => {
   const result = await openai.completions.create({
     model: 'gpt-3.5-turbo-instruct',
     prompt,
-    temperature: 0
+    temperature: 0.7,
+    max_tokens: 50
   })
 
   const response = result.choices[0].text
@@ -66,13 +67,33 @@ export const isNotQuestion = async (text: string | [string, string]) => {
   const result = await openai.completions.create({
     model: 'gpt-3.5-turbo-instruct',
     prompt,
-    temperature: 0
+    temperature: 0.7,
+    max_tokens: 50
   })
 
   
   const response = result.choices[0].text
   console.log(response);
   return response.toLowerCase().includes('no')
+}
+
+export const elaborateOrGuidance = async (text: string | [string, string]) => {
+  let prompt = `Does the user want to you to elaborate or do they want your guidance: "${text}" \nOnly answer 'elaborate' or 'guidance'`
+  if (Array.isArray(text)) {
+    prompt = `Based on the user's response "${text[1]}" to this question "${text[0]}", does the user want you to elaborate or do they want your guidance?  \nOnly answer 'elaborate' or 'guidance'`
+  }
+
+  const result = await openai.completions.create({
+    model: 'gpt-3.5-turbo-instruct',
+    prompt,
+    temperature: 0.7,
+    max_tokens: 50
+
+  })
+
+  const response = result.choices[0].text
+  console.log(response);
+  return response.toLowerCase().includes('elaborate');
 }
 
 export const ventOrAdvice = async (text: string | [string, string]) => {
