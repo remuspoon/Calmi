@@ -17,7 +17,7 @@ const RAPPORT_BUILDING_PATH_1: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "Remind them that its okay to feel a range of emotions. Tell them they should acknowledge their feelings and it's okay to feel the way they feel. Ask them to tell you what emotions they're feeling. Don't use the word 'understand' and 'normal'"
+        "Remind them that its okay to feel a range of emotions. Tell them they should acknowledge their feelings and it's okay to feel the way they feel. Ask them to tell you what emotions they're feeling. Don't use more than 3 sentences. Don't use the word 'understand' and 'normal'"
       )
   },
 
@@ -25,7 +25,7 @@ const RAPPORT_BUILDING_PATH_1: RESPONSE_TYPE | RESPONSE_TYPE[] = [
     response: (messages) =>
       chatCompletions(
         messages,
-        "in one sentence, only write a question that asks them how their emotions have been impacting them. "
+        "in one sentence, respond to them. Finish by writing a question that asks them how their emotions have been impacting them. "
       )
   },
 
