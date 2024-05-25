@@ -66,29 +66,52 @@ function Chat() {
     scrollToBottom()
   }, [messages])
 
-  // Initalize the timer
-  useEffect(() => {
-    // increment the timer
-    const timerCallback = setTimeout(() => {
-        // FIXME: Use set state
-        setTimer((timer) => timer + 1);
-        setCurrentMessages([]);
-        setTimer(0);
-      }, 3000);
-      return () => {
-        clearInterval(timerCallback);
-      };
-  }, [currentMessages]);
+  // // Initalize the timer
+  // useEffect(() => {
+  //   // increment the timer
+  //   const timerCallback = setTimeout(() => {
+  //       // FIXME: Use set state
+  //       setTimer((timer) => timer + 1);
+  //       setCurrentMessages([]);
+  //       setTimer(0);
+  //     }, 3000);
+  //     return () => {
+  //       clearInterval(timerCallback);
+  //     };
+  // }, [currentMessages]);
+
+  // useEffect(() => {
+  //   if (timer >= 3 && !message && currentMessages.length) {
+  //     const combinedMessage = currentMessages.join("\n\n"); // combine the messages into a single message for the bot
+  //     botReply(combinedMessage);
+  //     console.log("API Request sent with:", combinedMessage);
+  //     setTimer(0);
+  //     setCurrentMessages([]);
+  //   }
+  //   console.log(timer);
+  // }, [timer]);
+
+
 
   useEffect(() => {
-    if (timer >= 3 && !message && currentMessages.length) {
-      botReply(message);
-      console.log("API Request sent with:", currentMessages);
-      setTimer(0);
-      setCurrentMessages([]);
+    if (currentMessages.length === 0) {
+        return; // Do nothing if no messages are accumulated
     }
-    console.log(timer);
-  }, [timer]);
+
+    // Set a timer that will trigger after 3 seconds
+    const timerId = setTimeout(() => {
+        if (currentMessages.length > 0) {
+            const combinedMessage = currentMessages.join("\n");
+            botReply(combinedMessage); // Send combined messages to the bot
+            console.log("API Request sent with:", combinedMessage);
+            setCurrentMessages([]); // Clear the accumulated messages after sending
+        }
+    }, 3000); // 3000 milliseconds = 3 seconds
+
+    return () => clearTimeout(timerId); // Clear timeout if the component unmounts or currentMessages changes
+  }, [currentMessages]); // Depend on currentMessages
+
+
 
   // initialize the chat
   useEffect(() => {
@@ -275,10 +298,10 @@ function Chat() {
     setMessage('')
     setCurrentMessages([...currentMessages, message])
     // if (message !== originalMessage) return;
-    setTimer(0);
+    // setTimer(0);
 
     // Add to firestore
-    botReply(message)
+    // botReply(message)
     await addMessage(message)
     
   }
