@@ -25,16 +25,21 @@ import { useSetAtom } from 'jotai'
 import { delay } from '@/lib/utils'
 
 function Chat() {
+  // FIXME: Set some state for concatenated string
   const [message, setMessage] = useState('')
+  const [currentMessages, setCurrentMessages] = useState<string[]>([])
   const [messages, setMessages] = useState<
     ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
   >([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
+  const [timer, setTimer] = useState(0);
+
   const user = useUser()
   const chatID = useParams().chatID as string
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [endChat, setEndChat] = useState(false)
   const setProgress = useSetAtom(chatProgressAtom)
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // print
   const printRef = useRef<HTMLDivElement>(null)
@@ -61,12 +66,37 @@ function Chat() {
     scrollToBottom()
   }, [messages])
 
+  // Initalize the timer
+  useEffect(() => {
+    // increment the timer
+    const timerCallback = setTimeout(() => {
+        // FIXME: Use set state
+        setTimer((timer) => timer + 1);
+        setCurrentMessages([]);
+        setTimer(0);
+      }, 3000);
+      return () => {
+        clearInterval(timerCallback);
+      };
+  }, [currentMessages]);
+
+  useEffect(() => {
+    if (timer >= 3 && !message && currentMessages.length) {
+      botReply(message);
+      console.log("API Request sent with:", currentMessages);
+      setTimer(0);
+      setCurrentMessages([]);
+    }
+    console.log(timer);
+  }, [timer]);
+
   // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
       const m = await getMessagesFromFirestore(user.uid, chatID)
       setMessages(m)
+      console.log(m)
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
       const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
@@ -142,14 +172,19 @@ function Chat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatID, user])
 
+  // end of useeffect
+
   if (user === 'loading' || !user || !chatID) return null
 
-  // add message to firestore and get reply from bot
+
+  // add message to firestore
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
       // const lastUserMessage = messages[messages.length - 1]
       // console.log(lastUserMessage)
+
+      // Func 1
       const token = messages[messages.length - 1]?.token ?? 'START'
       const subtoken = messages[messages.length - 1]?.subtoken ?? 0
 
@@ -164,6 +199,27 @@ function Chat() {
       setMessages((prvMsgs) => [...prvMsgs, newMessage])
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
+
+    } catch (error) {
+    } finally {
+      setIsLoadingAnswer(false)
+    }
+  }
+
+  // get reply from bot
+  const botReply = async (content: string) => {
+    const token = messages[messages.length - 1]?.token ?? 'START'
+    const subtoken = messages[messages.length - 1]?.subtoken ?? 0
+    const newMessage: ChatCompletionMessageParam<'user'> = {
+      role: 'user',
+      content,
+      token,
+      subtoken
+    }
+
+    // newMessage = currentMessages.join("") (psudo)
+    // currentMessages as a variable
+    try {
       let reply = await getbotReply([...messages, newMessage])
       if (!reply) return
 
@@ -205,9 +261,26 @@ function Chat() {
     if (message.length > 2000) {
       toast.error('Message too long')
       return
-    }
+
+  }
+    // lets set a timer for 1-2 seconds, if message is updated during that time
+    // then, do not runBotReply function yet
+    // append the next message to the last one to be one big gulp
+    // const timer = new Promise<void>((resolve) => {
+    //   setTimeout(resolve, 2000);
+    // });
+    // const originalMessage = message;
+    // await timer;
+    
     setMessage('')
+    setCurrentMessages([...currentMessages, message])
+    // if (message !== originalMessage) return;
+    setTimer(0);
+
+    // Add to firestore
+    botReply(message)
     await addMessage(message)
+    
   }
 
   return (
