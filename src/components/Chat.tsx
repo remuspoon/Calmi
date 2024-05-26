@@ -40,6 +40,65 @@ function Chat() {
   const [endChat, setEndChat] = useState(false)
   const setProgress = useSetAtom(chatProgressAtom)
   const typingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // merk code begins here
+  const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const handleSubmitTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      // Reset the typing timer
+      if (typingTimerRef.current) {
+          clearTimeout(typingTimerRef.current);
+      }
+
+      
+
+      typingTimerRef.current = setTimeout(() => {
+          console.log("User paused typing");  // Attempt to send messages if conditions are met
+          typingTimerRef.current = null;
+          attemptToSendMessages();
+      }, 2000);  // Typing pause threshold
+  };
+
+  
+  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+      e?.preventDefault();
+      if (!message || isLoadingAnswer) return; // Check if there's no message or if it's currently loading an answer
+      if (message.length > 2000) {
+          toast.error('Message too long'); // Prevent sending excessively long messages
+          return;
+      }
+  
+      // Add message to the currentMessages state for accumulation
+      setCurrentMessages(prev => [...prev, message.trim()]);
+      setMessage(''); // Clear the input field immediately after submission
+  
+      // Add the message to Firestore
+      await addMessage(message);
+  
+      // Debounce sending messages
+      if (handleSubmitTimerRef.current) {
+          clearTimeout(handleSubmitTimerRef.current); // Clear existing timer if there is one
+      }
+      handleSubmitTimerRef.current = setTimeout(() => {
+          // Check if it's appropriate to attempt to send messages
+          handleSubmitTimerRef.current = null;
+          attemptToSendMessages();
+      }, 1000); // Set a delay of 3000 milliseconds (3 seconds) after the last message submission
+  };
+
+  const attemptToSendMessages = () => {
+    // Only attempt to send messages if both timers have elapsed
+    if (!currentMessages.length || typingTimerRef.current || handleSubmitTimerRef.current) return;
+
+    // Check if both timeouts have completed
+    const combinedMessages = currentMessages.join("\n");
+    botReply(combinedMessages);  // Send combined messages to the bot
+    console.log("Sent messages due to inactivity after submission:", combinedMessages);
+    setCurrentMessages([]); // Clear the accumulated messages after sending    
+};
+  
+  // merk end
+
 
   // print
   const printRef = useRef<HTMLDivElement>(null)
@@ -90,26 +149,6 @@ function Chat() {
   //   }
   //   console.log(timer);
   // }, [timer]);
-
-
-
-  useEffect(() => {
-    if (currentMessages.length === 0) {
-        return; // Do nothing if no messages are accumulated
-    }
-
-    // Set a timer that will trigger after 3 seconds
-    const timerId = setTimeout(() => {
-        if (currentMessages.length > 0) {
-            const combinedMessage = currentMessages.join("\n");
-            botReply(combinedMessage); // Send combined messages to the bot
-            console.log("API Request sent with:", combinedMessage);
-            setCurrentMessages([]); // Clear the accumulated messages after sending
-        }
-    }, 3000); // 3000 milliseconds = 3 seconds
-
-    return () => clearTimeout(timerId); // Clear timeout if the component unmounts or currentMessages changes
-  }, [currentMessages]); // Depend on currentMessages
 
 
 
@@ -277,34 +316,35 @@ function Chat() {
     }
   }
 
-  // handle submit
-  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
-    e?.preventDefault()
-    if (!message || isLoadingAnswer) return
-    if (message.length > 2000) {
-      toast.error('Message too long')
-      return
+  // // handle submit
+  // const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+  //   e?.preventDefault()
+  //   if (!message || isLoadingAnswer) return
+  //   if (message.length > 2000) {
+  //     toast.error('Message too long')
+  //     return
 
-  }
-    // lets set a timer for 1-2 seconds, if message is updated during that time
-    // then, do not runBotReply function yet
-    // append the next message to the last one to be one big gulp
-    // const timer = new Promise<void>((resolve) => {
-    //   setTimeout(resolve, 2000);
-    // });
-    // const originalMessage = message;
-    // await timer;
+  // }
+  //   // lets set a timer for 1-2 seconds, if message is updated during that time
+  //   // then, do not runBotReply function yet
+  //   // append the next message to the last one to be one big gulp
+  //   // const timer = new Promise<void>((resolve) => {
+  //   //   setTimeout(resolve, 2000);
+  //   // });
+  //   // const originalMessage = message;
+  //   // await timer;
     
-    setMessage('')
-    setCurrentMessages([...currentMessages, message])
-    // if (message !== originalMessage) return;
-    // setTimer(0);
+  //   setMessage('')
+  //   setCurrentMessages([...currentMessages, message])
+  //   // if (message !== originalMessage) return;
+  //   // setTimer(0);
 
-    // Add to firestore
-    // botReply(message)
-    await addMessage(message)
+  //   // Add to firestore
+  //   // botReply(message)
+  //   await addMessage(message)
     
-  }
+  // }
+
 
   return (
     <div className='basis-full grow mt-5 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl p-4 bg-secondary'>
