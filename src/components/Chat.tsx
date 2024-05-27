@@ -43,60 +43,135 @@ function Chat() {
   // merk code begins here
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const handleSubmitTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [shouldSendMessages, setShouldSendMessages] = useState(false);
+
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      // Reset the typing timer
-      if (typingTimerRef.current) {
-          clearTimeout(typingTimerRef.current);
+// Improved handling of input change to reset and handle timers correctly
+const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  setMessage(e.target.value);
+  // Reset typing timer on every key press
+  if (typingTimerRef.current) {
+    clearTimeout(typingTimerRef.current);
+  }
+  typingTimerRef.current = setTimeout(() => {
+    console.log("User paused typing");
+
+
+    (async function() {
+      try {
+          await addMessage(`t`)
+      } catch (e) {
+          console.error(e);
       }
+  })();
 
-      
 
-      typingTimerRef.current = setTimeout(() => {
-          console.log("User paused typing");  // Attempt to send messages if conditions are met
-          typingTimerRef.current = null;
-          attemptToSendMessages();
-      }, 2000);  // Typing pause threshold
-  };
+    typingTimerRef.current = null;
+    attemptToSendMessages()
+}, 4500);
+};
 
-  
-  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
-      e?.preventDefault();
-      if (!message || isLoadingAnswer) return; // Check if there's no message or if it's currently loading an answer
-      if (message.length > 2000) {
-          toast.error('Message too long'); // Prevent sending excessively long messages
-          return;
+// Updated submit handler to manage message accumulation properly
+const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+  e?.preventDefault();
+  if (isLoadingAnswer) return; // Check if still waiting for an answer to avoid duplication
+
+  if (message.trim().length <= 0) return;
+
+  const persist_message = message.trim()
+  setMessage(''); // Clear input field
+  await addMessage(persist_message);
+
+
+  setCurrentMessages(prev => [...prev, persist_message]);
+
+  // Set a timeout to check if the user has stopped submitting messages
+  if (handleSubmitTimerRef.current) {
+    clearTimeout(handleSubmitTimerRef.current);
+  }
+  handleSubmitTimerRef.current = setTimeout(() => {
+    console.log("Submission pause complete");
+
+    (async function() {
+      try {
+          await addMessage(`s`)
+      } catch (e) {
+          console.error(e);
       }
+  })();
+
+
+    handleSubmitTimerRef.current = null;
+    attemptToSendMessages()
+}, 3000);
   
-      // Add message to the currentMessages state for accumulation
-      setCurrentMessages(prev => [...prev, message.trim()]);
-      setMessage(''); // Clear the input field immediately after submission
+};
+
+// // Ensure messages are sent only when all conditions are met
+// const attemptToSendMessages = async () => {
+//   console.log("Attempted to send messages")
+//   console.warn("weewoo")
   
-      // Add the message to Firestore
-      await addMessage(message);
-  
-      // Debounce sending messages
-      if (handleSubmitTimerRef.current) {
-          clearTimeout(handleSubmitTimerRef.current); // Clear existing timer if there is one
+//   await addMessage(`debug attempting send: ${currentMessages.length} ${typingTimerRef.current} ${handleSubmitTimerRef.current} hehe`)
+
+//   if (!currentMessages.length) return; // || typingTimerRef.current || handleSubmitTimerRef.current) return;
+
+
+//   const combinedMessages = currentMessages.join("\n");
+//   botReply(combinedMessages);
+//   setCurrentMessages([]); // Clear accumulated messages after sending
+// };
+
+const attemptToSendMessages = async () => {
+  // await addMessage(`debug attempting send: ${currentMessages.length} ${typingTimerRef.current} ${handleSubmitTimerRef.current}`)
+  (async function() {
+    try {
+        await addMessage(`as`)
+    } catch (e) {
+        console.error(e);
+    }
+})();
+
+  // Check if it's appropriate to attempt to send messages
+  if (!typingTimerRef.current && !handleSubmitTimerRef.current && currentMessages.length > 0) {
+    (async function() {
+      try {
+          await addMessage(`sst`)
+      } catch (e) {
+          console.error(e);
       }
-      handleSubmitTimerRef.current = setTimeout(() => {
-          // Check if it's appropriate to attempt to send messages
-          handleSubmitTimerRef.current = null;
-          attemptToSendMessages();
-      }, 1000); // Set a delay of 3000 milliseconds (3 seconds) after the last message submission
-  };
+  })();
+      setShouldSendMessages(true);  // Set flag to true to trigger sending in effect
+  }
+};
 
-  const attemptToSendMessages = () => {
-    // Only attempt to send messages if both timers have elapsed
-    if (!currentMessages.length || typingTimerRef.current || handleSubmitTimerRef.current) return;
+useEffect(() => {
+  (async function() {
+    try {
+        await addMessage(`sss`)
+    } catch (e) {
+        console.error(e);
+    }
+})();
+  // if (!typingTimerRef.current && !handleSubmitTimerRef.current && currentMessages.length > 0) {
+    if (!shouldSendMessages) return;
 
-    // Check if both timeouts have completed
     const combinedMessages = currentMessages.join("\n");
     botReply(combinedMessages);  // Send combined messages to the bot
-    console.log("Sent messages due to inactivity after submission:", combinedMessages);
-    setCurrentMessages([]); // Clear the accumulated messages after sending    
-};
-  
+    console.log("Messages sent due to inactivity after submission:", combinedMessages);
+    setCurrentMessages([]); // Clear accumulated messages after sending
+    setShouldSendMessages(false)
+}, [shouldSendMessages]);
+
+// useEffect(() => {
+//   (async function() {
+//     try {
+//         await addMessage(`currentMessages updated to length ${currentMessages.length}`)
+//     } catch (e) {
+//         console.error(e);
+//     }
+// })();
+// }, [currentMessages])
   // merk end
 
 
