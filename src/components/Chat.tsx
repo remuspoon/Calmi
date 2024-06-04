@@ -23,157 +23,54 @@ import { chat_closed, chat_opened } from '@/services/firebase/analytics'
 import { chatProgressAtom } from '@/lib/state'
 import { useSetAtom } from 'jotai'
 import { delay } from '@/lib/utils'
+import { send } from 'process'
+import { set } from 'nprogress'
 
 function Chat() {
-  // FIXME: Set some state for concatenated string
   const [message, setMessage] = useState('')
-  const [currentMessages, setCurrentMessages] = useState<string[]>([])
+  const messageRef = useRef('')
   const [messages, setMessages] = useState<
     ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]
   >([])
+  const messagesRef = useRef<ChatCompletionMessageParam<'user' | 'assistant' | 'system'>[]>([])
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false)
-  const [timer, setTimer] = useState(0);
-
   const user = useUser()
   const chatID = useParams().chatID as string
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [endChat, setEndChat] = useState(false)
   const setProgress = useSetAtom(chatProgressAtom)
-  const typingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  // merk code begins here
+  const [currentMessages, setCurrentMessages] = useState<string[]>([])
+  const currentMessagesRef = useRef<string[]>([])
+  const submissionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const handleSubmitTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const [shouldSendMessages, setShouldSendMessages] = useState(false);
 
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
   
-// Improved handling of input change to reset and handle timers correctly
-const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  setMessage(e.target.value);
-  // Reset typing timer on every key press
-  if (typingTimerRef.current) {
-    clearTimeout(typingTimerRef.current);
-  }
-  typingTimerRef.current = setTimeout(() => {
-    console.log("User paused typing");
+  useEffect(() => {
+    currentMessagesRef.current = currentMessages;
+  }, [currentMessages]);
 
+  useEffect(() => {
+    messageRef.current = message;
 
-    (async function() {
-      try {
-          await addMessage(`t`)
-      } catch (e) {
-          console.error(e);
-      }
-  })();
-
-
-    typingTimerRef.current = null;
-    attemptToSendMessages()
-}, 4500);
-};
-
-// Updated submit handler to manage message accumulation properly
-const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
-  e?.preventDefault();
-  if (isLoadingAnswer) return; // Check if still waiting for an answer to avoid duplication
-
-  if (message.trim().length <= 0) return;
-
-  const persist_message = message.trim()
-  setMessage(''); // Clear input field
-  await addMessage(persist_message);
-
-
-  setCurrentMessages(prev => [...prev, persist_message]);
-
-  // Set a timeout to check if the user has stopped submitting messages
-  if (handleSubmitTimerRef.current) {
-    clearTimeout(handleSubmitTimerRef.current);
-  }
-  handleSubmitTimerRef.current = setTimeout(() => {
-    console.log("Submission pause complete");
-
-    (async function() {
-      try {
-          await addMessage(`s`)
-      } catch (e) {
-          console.error(e);
-      }
-  })();
-
-
-    handleSubmitTimerRef.current = null;
-    attemptToSendMessages()
-}, 3000);
-  
-};
-
-// // Ensure messages are sent only when all conditions are met
-// const attemptToSendMessages = async () => {
-//   console.log("Attempted to send messages")
-//   console.warn("weewoo")
-  
-//   await addMessage(`debug attempting send: ${currentMessages.length} ${typingTimerRef.current} ${handleSubmitTimerRef.current} hehe`)
-
-//   if (!currentMessages.length) return; // || typingTimerRef.current || handleSubmitTimerRef.current) return;
-
-
-//   const combinedMessages = currentMessages.join("\n");
-//   botReply(combinedMessages);
-//   setCurrentMessages([]); // Clear accumulated messages after sending
-// };
-
-const attemptToSendMessages = async () => {
-  // await addMessage(`debug attempting send: ${currentMessages.length} ${typingTimerRef.current} ${handleSubmitTimerRef.current}`)
-  (async function() {
-    try {
-        await addMessage(`as`)
-    } catch (e) {
-        console.error(e);
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
     }
-})();
-
-  // Check if it's appropriate to attempt to send messages
-  if (!typingTimerRef.current && !handleSubmitTimerRef.current && currentMessages.length > 0) {
-    (async function() {
-      try {
-          await addMessage(`sst`)
-      } catch (e) {
-          console.error(e);
-      }
-  })();
-      setShouldSendMessages(true);  // Set flag to true to trigger sending in effect
-  }
-};
-
-useEffect(() => {
-  (async function() {
-    try {
-        await addMessage(`sss`)
-    } catch (e) {
-        console.error(e);
+    if (messageRef.current.trim() != "") {
+      typingTimerRef.current = setTimeout(() => {
+          console.log("Typing pause complete");
+          typingTimerRef.current = null;
+          if (currentMessagesRef.current.length > 0) {
+            sendToBot();
+          } else {
+            console.log("No messages to send");
+          }
+      }, 3000);
     }
-})();
-  // if (!typingTimerRef.current && !handleSubmitTimerRef.current && currentMessages.length > 0) {
-    if (!shouldSendMessages) return;
-
-    const combinedMessages = currentMessages.join("\n");
-    botReply(combinedMessages);  // Send combined messages to the bot
-    console.log("Messages sent due to inactivity after submission:", combinedMessages);
-    setCurrentMessages([]); // Clear accumulated messages after sending
-    setShouldSendMessages(false)
-}, [shouldSendMessages]);
-
-// useEffect(() => {
-//   (async function() {
-//     try {
-//         await addMessage(`currentMessages updated to length ${currentMessages.length}`)
-//     } catch (e) {
-//         console.error(e);
-//     }
-// })();
-// }, [currentMessages])
-  // merk end
-
+  }, [message]);
 
   // print
   const printRef = useRef<HTMLDivElement>(null)
@@ -200,40 +97,12 @@ useEffect(() => {
     scrollToBottom()
   }, [messages])
 
-  // // Initalize the timer
-  // useEffect(() => {
-  //   // increment the timer
-  //   const timerCallback = setTimeout(() => {
-  //       // FIXME: Use set state
-  //       setTimer((timer) => timer + 1);
-  //       setCurrentMessages([]);
-  //       setTimer(0);
-  //     }, 3000);
-  //     return () => {
-  //       clearInterval(timerCallback);
-  //     };
-  // }, [currentMessages]);
-
-  // useEffect(() => {
-  //   if (timer >= 3 && !message && currentMessages.length) {
-  //     const combinedMessage = currentMessages.join("\n\n"); // combine the messages into a single message for the bot
-  //     botReply(combinedMessage);
-  //     console.log("API Request sent with:", combinedMessage);
-  //     setTimer(0);
-  //     setCurrentMessages([]);
-  //   }
-  //   console.log(timer);
-  // }, [timer]);
-
-
-
   // initialize the chat
   useEffect(() => {
     const initializeChat = async () => {
       if (user === 'loading' || !user || !chatID) return
       const m = await getMessagesFromFirestore(user.uid, chatID)
       setMessages(m)
-      console.log(m)
       const lastMessage = m[m.length - 1]
       const isForBot = lastMessage?.role === 'user'
       const lastUserMessage = m.filter((m) => m.role === 'user').reverse()[0]
@@ -309,76 +178,40 @@ useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatID, user])
 
-  // end of useeffect
-
   if (user === 'loading' || !user || !chatID) return null
 
-
-  // add message to firestore
+  // add message to firestore and get reply from bot
   const addMessage = async (content: string) => {
     setIsLoadingAnswer(true)
     try {
-      // const lastUserMessage = messages[messages.length - 1]
-      // console.log(lastUserMessage)
-
-      // Func 1
-      const token = messages[messages.length - 1]?.token ?? 'START'
-      const subtoken = messages[messages.length - 1]?.subtoken ?? 0
-
+      const token = messagesRef.current[messagesRef.current.length - 1]?.token ?? 'START'
+      const subtoken = messagesRef.current[messagesRef.current.length - 1]?.subtoken ?? 0
+  
       const newMessage: ChatCompletionMessageParam<'user'> = {
         role: 'user',
         content,
         token,
         subtoken
       }
-
+  
+  
       // Add the user message to the state so we can see it immediately
-      setMessages((prvMsgs) => [...prvMsgs, newMessage])
+      setMessages((prevMsgs) => {
+        const updatedMessages = [...prevMsgs, newMessage];
+        messagesRef.current = updatedMessages;
+        return updatedMessages;
+      })
+  
+      setCurrentMessages((prev) => {
+        const updatedCurrentMessages = [...prev, content];
+        currentMessagesRef.current = updatedCurrentMessages;
+        return updatedCurrentMessages;
+      })
+
+
+      // send the user message to the bot
 
       await addMessageToFirestore(user.uid, chatID, newMessage)
-
-    } catch (error) {
-    } finally {
-      setIsLoadingAnswer(false)
-    }
-  }
-
-  // get reply from bot
-  const botReply = async (content: string) => {
-    const token = messages[messages.length - 1]?.token ?? 'START'
-    const subtoken = messages[messages.length - 1]?.subtoken ?? 0
-    const newMessage: ChatCompletionMessageParam<'user'> = {
-      role: 'user',
-      content,
-      token,
-      subtoken
-    }
-
-    // newMessage = currentMessages.join("") (psudo)
-    // currentMessages as a variable
-    try {
-      let reply = await getbotReply([...messages, newMessage])
-      if (!reply) return
-
-      // end of the chat
-      if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
-        setEndChat(true)
-        setProgress({
-          token: 'END',
-          subtoken: 0
-        })
-        postprocess(user.uid, chatID, newMessage, true, messages)
-      }
-
-      // Add the assistant message to the state
-      for (const r of reply) {
-        setMessages((prevmsg) => [...prevmsg, r])
-        await delay(r.content.length * 5)
-      }
-
-      // save to firestore
-      await addMessageToFirestore(user.uid, chatID, reply)
-
       setProgress({
         token,
         subtoken
@@ -391,35 +224,101 @@ useEffect(() => {
     }
   }
 
-  // // handle submit
-  // const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
-  //   e?.preventDefault()
-  //   if (!message || isLoadingAnswer) return
-  //   if (message.length > 2000) {
-  //     toast.error('Message too long')
-  //     return
+  const sendToBot = async () => {
+    console.log(`Sending to bot with timers - submission: ${submissionTimerRef.current} and typing: ${typingTimerRef.current}`)
+    if (!submissionTimerRef.current && !typingTimerRef.current) { 
+      setIsLoadingAnswer(true)
+      const token = messagesRef.current[messagesRef.current.length - 1]?.token ?? 'START'
+      const subtoken = messagesRef.current[messagesRef.current.length - 1]?.subtoken ?? 0
+  
+      if (currentMessagesRef.current.length === 0) {
+        let lastNonUserMessageIndex = -1
+        for (let i = messagesRef.current.length - 1; i >= 0; i--) {
+          if (messagesRef.current[i].role !== 'user') {
+            lastNonUserMessageIndex = i
+            break
+          }
+        }
+        setCurrentMessages(messagesRef.current.slice(lastNonUserMessageIndex + 1).map((m) => m.content))
+      }
+  
+      const newMessage: ChatCompletionMessageParam<'user'> = {
+        role: 'user',
+        content: currentMessagesRef.current[currentMessagesRef.current.length - 1],
+        token,
+        subtoken
+      }
+  
+      const combinedMessage: ChatCompletionMessageParam<'user'> = {
+        role: 'user',
+        content: currentMessagesRef.current.join('\n'),
+        token,
+        subtoken
+      }
+  
+      let messagesToProcess = messagesRef.current.slice(0, messagesRef.current.length - currentMessagesRef.current.length)
+      messagesToProcess.push(combinedMessage)
+      let reply = await getbotReply(messagesToProcess)
+      if (!reply) return
+      setCurrentMessages([])
+  
+      // end of the chat
+      if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
+        setEndChat(true)
+        setProgress({
+          token: 'END',
+          subtoken: 0
+        })
+        postprocess(user.uid, chatID, newMessage, true, messagesRef.current)
+      }
+  
+      // Add the assistant message to the state
+      for (const r of reply) {
+        setMessages((prevmsg) => {
+          const updatedMessages = [...prevmsg, r];
+          messagesRef.current = updatedMessages;
+          return updatedMessages;
+        })
+        await delay(r.content.length * 5)
+      }
+  
+      // save to firestore
+      await addMessageToFirestore(user.uid, chatID, reply)
+      setIsLoadingAnswer(false)
+    }
+  }
+  
 
-  // }
-  //   // lets set a timer for 1-2 seconds, if message is updated during that time
-  //   // then, do not runBotReply function yet
-  //   // append the next message to the last one to be one big gulp
-  //   // const timer = new Promise<void>((resolve) => {
-  //   //   setTimeout(resolve, 2000);
-  //   // });
-  //   // const originalMessage = message;
-  //   // await timer;
-    
-  //   setMessage('')
-  //   setCurrentMessages([...currentMessages, message])
-  //   // if (message !== originalMessage) return;
-  //   // setTimer(0);
+  // handle submit
+  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault()
+    if (!message || isLoadingAnswer) return
+    if (message.length > 2000 || currentMessagesRef.current.join('\n').length + 2 + message.length > 2000) {
+      toast.error('Message too long')
+      return
+    }
+    setMessage('')
+    await addMessage(message)
 
-  //   // Add to firestore
-  //   // botReply(message)
-  //   await addMessage(message)
-    
-  // }
-
+    if (submissionTimerRef.current) {
+      clearTimeout(submissionTimerRef.current);
+    }
+    submissionTimerRef.current = setTimeout(() => {
+      if (messageRef.current.trim() != "") {
+        console.log(`Message in text box... waiting: '${messageRef.current}'`)
+        submissionTimerRef.current = setTimeout(() => {
+          console.log("Full pause complete");
+          submissionTimerRef.current = null;
+          sendToBot();
+        }, 5000)
+      } else {
+        console.log("Submission pause complete");
+        submissionTimerRef.current = null;
+        typingTimerRef.current = null;
+        sendToBot();
+      }
+    }, 2000);
+  }
 
   return (
     <div className='basis-full grow mt-5 rounded-md h-full relative my-5 pb-0 flex flex-col max-w-2xl p-4 bg-secondary'>
