@@ -304,7 +304,7 @@ function Chat() {
         const dangerMessage: ChatCompletionMessageParam<'assistant'> = {
           role: 'assistant',
           // content: "It sounds like you're in a difficult situation. If you're feeling suicidal, please contact a mental health professional immediately.\n\nIf you\'re in the UK, you can call the Samaritans on 116 123 or visit their website at www.samaritans.org."
-          content: "It sounds like you're in a difficult situation. Help and support is available right now if you need it. You do not have to struggle with difficult feelings alone. If you're in the UK, I strongly suggest you reach out to NHS's 111 Suicide and Crisis Lifeline. Here's some of their resources: [Call 111](tel:111) [Text SHOUT to 85258](sms:85258) [Chat Online](https://111.nhs.uk/triage/check-your-mental-health-symptoms) [Official Website](https://www.nhs.uk/nhs-services/mental-health-services/where-to-get-urgent-help-for-mental-health/)"
+          content: "It sounds like you're in a difficult situation. Help and support is available right now if you need it. You do not have to struggle with difficult feelings alone. If you're in the UK, I strongly suggest you reach out to 988 Suicide and Crisis Lifeline. Here's some of their resources: [Call 988](tel:988) [Text 988](sms:988) [Chat Online](https://988lifeline.org/chat/?utm_source=calmi&utm_medium=web) [Official Website](https://988lifeline.org/?utm_source=google&utm_medium=web&utm_campaign=onebox)"
           // content: "No ahahahaaa don't kill yourself... you so sexy aha. ok google, search for rocket league clips on [google.com](https://google.com)"
         }
         setMessages((prevmsg) => {
