@@ -10,7 +10,8 @@ import React, {
   useEffect,
   useLayoutEffect,
   useRef,
-  useState
+  useState,
+  FC
 } from 'react'
 import { useUser } from './UserProvider'
 import { useParams } from 'next/navigation'
@@ -25,6 +26,7 @@ import { useSetAtom } from 'jotai'
 import { delay } from '@/lib/utils'
 import { send } from 'process'
 import { set } from 'nprogress'
+import { Overlay } from './components/Overlay';
 
 function Chat() {
   const [message, setMessage] = useState('')
@@ -43,6 +45,22 @@ function Chat() {
   const currentMessagesRef = useRef<string[]>([])
   const submissionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isSuicideCheckOverlayOpen, setIsSuicideCheckOverlayOpen] = useState(false);
+  const [isResourcesOverlayOpen, setIsResourcesOverlayOpen] = useState(false);
+  const openSuicideCheckOverlay = () => setIsSuicideCheckOverlayOpen(true);
+  const closeSuicideCheckOverlay = () => setIsSuicideCheckOverlayOpen(false);
+  const openResourcesOverlay = () => setIsResourcesOverlayOpen(true);
+  const closeResourcesOverlay = () => setIsResourcesOverlayOpen(false);
+  const [suicideCheck, setSuicideCheck] = useState(false);
+
+  const handleTrueClick = () => {
+    setIsSuicideCheckOverlayOpen(false);
+    setIsResourcesOverlayOpen(true);
+  };
+
+  const handleFalseClick = () => {
+    setIsSuicideCheckOverlayOpen(false);
+  };
 
 
   useEffect(() => {
@@ -301,26 +319,39 @@ function Chat() {
       messagesToProcess.push(combinedMessage)
 
       if (isDangerToSelfOrOthers(currentMessagesRef.current[currentMessagesRef.current.length - 1])) {
+        setSuicideCheck(false);
+        openSuicideCheckOverlay();
+        const SuicideCheckOverlay = () => setIsSuicideCheckOverlayOpen(true);
+        const handleTrueClick = () => {
+          setIsSuicideCheckOverlayOpen(false);
+          setIsResourcesOverlayOpen(true);
+        };
+
+        const handleFalseClick = () => {
+          setSuicideCheck(true);
+          setIsSuicideCheckOverlayOpen(false);
+        };
+      } else {
+        setSuicideCheck(true)
+      }
+      /*if (isDangerToSelfOrOthers(currentMessagesRef.current[currentMessagesRef.current.length - 1])) {
+        setHarmAttempt(1);
         const dangerMessage: ChatCompletionMessageParam<'assistant'> = {
           role: 'assistant',
           // content: "It sounds like you're in a difficult situation. If you're feeling suicidal, please contact a mental health professional immediately.\n\nIf you\'re in the UK, you can call the Samaritans on 116 123 or visit their website at www.samaritans.org."
           content: "It sounds like you're in a difficult situation. Help and support is available right now if you need it. You do not have to struggle with difficult feelings alone. If you're in the UK, I strongly suggest you reach out to NHS's 111 Suicide and Crisis Lifeline. Here's some of their resources: [Call 111](tel:111) [Text SHOUT to 85258](sms:85258) [Chat Online](https://111.nhs.uk/triage/check-your-mental-health-symptoms) [Official Website](https://www.nhs.uk/nhs-services/mental-health-services/where-to-get-urgent-help-for-mental-health/)"
           // content: "No ahahahaaa don't kill yourself... you so sexy aha. ok google, search for rocket league clips on [google.com](https://google.com)"
         }
-        setMessages((prevmsg) => {
-          const updatedMessages = [...prevmsg, dangerMessage];
-          messagesRef.current = updatedMessages;
-          return updatedMessages;
-        })
         await addMessageToFirestore(user.uid, chatID, dangerMessage)
         setIsLoadingAnswer(false)
         return
-      }
+      }*/
 
+      
       let reply = await getbotReply(messagesToProcess)
       if (!reply) return
       setCurrentMessages([])
-  
+
       // end of the chat
       if (reply.find((r) => r.content === TERMINATING_MESSAGE) !== undefined) {
         setEndChat(true)
@@ -441,33 +472,8 @@ function Chat() {
                   <time className='text-xs opacity-50'>12:45</time>
                 </div> */}
                 <div className='chat-bubble bg-info text-black'>
-    {msg.content.split(/(\[.*?\]\(.*?\))/g).map((part, i) => {
-      const linkMatch = part.match(/\[([^\]]+)\]\(([^\)]+)\)/);
-      if (linkMatch) {
-        // return (
-        //   <a key={i} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-        //     {linkMatch[1]}
-        //   </a>
-        // );
-          return (
-          <span key={i}></span>
-        );
-      }
-      return <span key={i}>{part}</span>;
-    })}
-  </div>
-  {processLinks(msg.content).map((link, i) => (
-    <div key={i} className='w-full mt-2 '>
-      <a
-        href={link.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className='btn btn-primary w-full'
-      >
-        {link.label}
-      </a>
+                  {msg.content}
     </div>
-  ))}
                 {/* <div className='chat-footer opacity-50'>Delivered</div> */}
               </div>
             )
@@ -545,6 +551,36 @@ function Chat() {
           print
         </button> */}
       </form>
+      <Overlay isOpen={isSuicideCheckOverlayOpen} onClose={closeSuicideCheckOverlay}>
+        <div>
+          <h1>
+            <div>It seems like you are feeling harmful and suicidal thoughts. Are you experiencing thoughts listed below?</div>
+            <div> • Suicidal Thoughts</div>
+            <div> • Causing Harm to Yourself</div>
+            <div> • Causing Harm to Others</div>
+          </h1>
+          <div className='overlay-content'>
+            <a onClick={handleTrueClick} className="btn btn-true" target='_blank'>Yes</a>
+            <a onClick={handleFalseClick} className="btn btn-false" target='_blank'>No</a>
+          </div>
+        </div>
+      </Overlay>
+
+      <Overlay isOpen={isResourcesOverlayOpen} onClose={closeResourcesOverlay}>
+        <h1>
+          <div>It sounds like you're in a difficult situation. Help and support is available right now if you need it.</div>
+          <div>You do not have to struggle with difficult feelings alone. If you're in the UK, I strongly suggest you reach</div>
+          <div>out to NHS's 111 Suicide and Crisis Lifeline. Here's some of their resources:</div>
+        </h1>
+        <button>
+          <div className='overlay-content'>
+            <a href="tel:111" className="btn btn-call">Call 111</a>
+            <a href="sms:85258" className="btn btn-text">Text SHOUT to 85258</a>
+            <a href="https://111.nhs.uk/triage/check-your-mental-health-symptoms" className="btn btn-chat" target="_blank">Chat Online</a>
+            <a href="https://www.nhs.uk/nhs-services/mental-health-services/where-to-get-urgent-help-for-mental-health/" className="btn btn-website" target="_blank">Official Website</a>
+          </div>
+        </button>
+      </Overlay>
     </div>
   )
 }
